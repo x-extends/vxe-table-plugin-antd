@@ -11,16 +11,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function getFormatDate(value, props, defaultFormat) {
-  return _xeUtils["default"].toDateString(value, props.format || defaultFormat);
-}
-
-function getFormatDates(values, props, separator, defaultFormat) {
-  return _xeUtils["default"].map(values, function (date) {
-    return getFormatDate(date, props, defaultFormat);
-  }).join(separator);
-}
-
 function matchCascaderData(index, list, values, labels) {
   var val = values[index];
 
@@ -41,12 +31,12 @@ function getEvents(editRender, params) {
   var type = 'change';
 
   switch (name) {
-    case 'ElAutocomplete':
+    case 'AAutoComplete':
       type = 'select';
       break;
 
-    case 'ElInput':
-    case 'ElInputNumber':
+    case 'AInput':
+    case 'AInputNumber':
       type = 'input';
       break;
   }
@@ -95,19 +85,19 @@ function cellText(h, cellValue) {
 }
 
 var renderMap = {
-  ElAutocomplete: {
-    autofocus: 'input.el-input__inner',
+  AAutoComplete: {
+    autofocus: 'input.ant-input',
     renderEdit: defaultRender
   },
-  ElInput: {
-    autofocus: 'input.el-input__inner',
+  AInput: {
+    autofocus: 'input.ant-input',
     renderEdit: defaultRender
   },
-  ElInputNumber: {
-    autofocus: 'input.el-input__inner',
+  AInputNumber: {
+    autofocus: 'input.ant-input-number-input',
     renderEdit: defaultRender
   },
-  ElSelect: {
+  ASelect: {
     renderEdit: function renderEdit(h, editRender, params) {
       var options = editRender.options,
           optionGroups = editRender.optionGroups,
@@ -132,7 +122,7 @@ var renderMap = {
       if (optionGroups) {
         var groupOptions = optionGroupProps.options || 'options';
         var groupLabel = optionGroupProps.label || 'label';
-        return [h('el-select', {
+        return [h('a-select', {
           props: props,
           model: {
             value: _xeUtils["default"].get(row, column.property),
@@ -142,24 +132,22 @@ var renderMap = {
           },
           on: getEvents(editRender, params)
         }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
-          return h('el-option-group', {
-            props: {
-              label: group[groupLabel]
-            },
+          return h('a-select-opt-group', {
             key: gIndex
-          }, _xeUtils["default"].map(group[groupOptions], function (item, index) {
-            return h('el-option', {
+          }, [h('span', {
+            slot: 'label'
+          }, group[groupLabel])].concat(_xeUtils["default"].map(group[groupOptions], function (item, index) {
+            return h('a-select-option', {
               props: {
-                value: item[valueProp],
-                label: item[labelProp]
+                value: item[valueProp]
               },
               key: index
-            });
-          }));
+            }, item[labelProp]);
+          })));
         }))];
       }
 
-      return [h('el-select', {
+      return [h('a-select', {
         props: props,
         model: {
           value: _xeUtils["default"].get(row, column.property),
@@ -169,13 +157,12 @@ var renderMap = {
         },
         on: getEvents(editRender, params)
       }, _xeUtils["default"].map(options, function (item, index) {
-        return h('el-option', {
+        return h('a-select-option', {
           props: {
-            value: item[valueProp],
-            label: item[labelProp]
+            value: item[valueProp]
           },
           key: index
-        });
+        }, item[labelProp]);
       }))];
     },
     renderCell: function renderCell(h, editRender, params) {
@@ -196,7 +183,7 @@ var renderMap = {
       var cellValue = _xeUtils["default"].get(row, column.property);
 
       if (!(cellValue === null || cellValue === undefined || cellValue === '')) {
-        return cellText(h, _xeUtils["default"].map(props.multiple ? cellValue : [cellValue], optionGroups ? function (value) {
+        return cellText(h, _xeUtils["default"].map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? function (value) {
           var selectItem;
 
           for (var index = 0; index < optionGroups.length; index++) {
@@ -222,7 +209,7 @@ var renderMap = {
       return cellText(h, '');
     }
   },
-  ElCascader: {
+  ACascader: {
     renderEdit: defaultRender,
     renderCell: function renderCell(h, _ref, params) {
       var _ref$props = _ref.props,
@@ -238,81 +225,27 @@ var renderMap = {
       return cellText(h, (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(" ".concat(props.separator || '/', " ")));
     }
   },
-  ElDatePicker: {
+  ADatePicker: {
     renderEdit: defaultRender,
     renderCell: function renderCell(h, _ref2, params) {
       var _ref2$props = _ref2.props,
           props = _ref2$props === void 0 ? {} : _ref2$props;
       var row = params.row,
           column = params.column;
-      var _props$rangeSeparator = props.rangeSeparator,
-          rangeSeparator = _props$rangeSeparator === void 0 ? '-' : _props$rangeSeparator;
 
       var cellValue = _xeUtils["default"].get(row, column.property);
 
-      switch (props.type) {
-        case 'week':
-          cellValue = getFormatDate(cellValue, props, 'yyyywWW');
-          break;
-
-        case 'month':
-          cellValue = getFormatDate(cellValue, props, 'yyyy-MM');
-          break;
-
-        case 'year':
-          cellValue = getFormatDate(cellValue, props, 'yyyy');
-          break;
-
-        case 'dates':
-          cellValue = getFormatDates(cellValue, props, ', ', 'yyyy-MM-dd');
-          break;
-
-        case 'daterange':
-          cellValue = getFormatDates(cellValue, props, " ".concat(rangeSeparator, " "), 'yyyy-MM-dd');
-          break;
-
-        case 'datetimerange':
-          cellValue = getFormatDates(cellValue, props, " ".concat(rangeSeparator, " "), 'yyyy-MM-dd HH:ss:mm');
-          break;
-
-        default:
-          cellValue = getFormatDate(cellValue, props, 'yyyy-MM-dd');
+      if (cellValue) {
+        cellValue = cellValue.format(props.format || 'YYYY-MM-DD');
       }
 
       return cellText(h, cellValue);
     }
   },
-  ElTimePicker: {
-    renderEdit: defaultRender,
-    renderCell: function renderCell(h, _ref3, params) {
-      var _ref3$props = _ref3.props,
-          props = _ref3$props === void 0 ? {} : _ref3$props;
-      var row = params.row,
-          column = params.column;
-      var isRange = props.isRange,
-          _props$format = props.format,
-          format = _props$format === void 0 ? 'hh:mm:ss' : _props$format,
-          _props$rangeSeparator2 = props.rangeSeparator,
-          rangeSeparator = _props$rangeSeparator2 === void 0 ? '-' : _props$rangeSeparator2;
-
-      var cellValue = _xeUtils["default"].get(row, column.property);
-
-      if (isRange) {
-        return cellValue ? cellValue.map(function (date) {
-          return _xeUtils["default"].toDateString(date, format);
-        }).join(" ".concat(rangeSeparator, " ")) : '';
-      }
-
-      return _xeUtils["default"].toDateString(cellValue, format);
-    }
-  },
-  ElTimeSelect: {
+  ARate: {
     renderEdit: defaultRender
   },
-  ElRate: {
-    renderEdit: defaultRender
-  },
-  ElSwitch: {
+  ASwitch: {
     renderEdit: defaultRender
   }
 };
@@ -349,20 +282,19 @@ function getEventTargetNode(evnt, container, queryCls) {
 
 
 function handleClearActivedEvent(params, evnt) {
-  if ( // 远程搜索
-  getEventTargetNode(evnt, document.body, 'el-autocomplete-suggestion').flag || // 下拉框
-  getEventTargetNode(evnt, document.body, 'el-select-dropdown').flag || // 级联
-  getEventTargetNode(evnt, document.body, 'el-cascader__dropdown').flag || getEventTargetNode(evnt, document.body, 'el-cascader-menus').flag || // 日期
-  getEventTargetNode(evnt, document.body, 'el-picker-panel').flag) {
+  if ( // 下拉框
+  getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag || // 级联
+  getEventTargetNode(evnt, document.body, 'ant-cascader-menus').flag || // 日期
+  getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag) {
     return false;
   }
 }
 
-function VXETablePluginElement() {}
+function VXETablePluginAntd() {}
 
-VXETablePluginElement.install = function (_ref4) {
-  var interceptor = _ref4.interceptor,
-      renderer = _ref4.renderer;
+VXETablePluginAntd.install = function (_ref3) {
+  var interceptor = _ref3.interceptor,
+      renderer = _ref3.renderer;
   // 添加到渲染器
   renderer.mixin(renderMap); // 处理事件冲突
 
@@ -370,8 +302,8 @@ VXETablePluginElement.install = function (_ref4) {
 };
 
 if (typeof window !== 'undefined' && window.VXETable) {
-  window.VXETable.use(VXETablePluginElement);
+  window.VXETable.use(VXETablePluginAntd);
 }
 
-var _default = VXETablePluginElement;
+var _default = VXETablePluginAntd;
 exports["default"] = _default;
