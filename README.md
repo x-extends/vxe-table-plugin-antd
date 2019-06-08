@@ -30,7 +30,7 @@ VXETable.use(VXETablePluginAntd)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | AInput,AAutocomplete,AInputNumber, ASelect,ACascader, ADatePicker,AMonthPicker,ARangePicker,AWeekPicker, ATimePicker,ASwitch,ARate | — |
+| name | 支持的渲染组件 | String | AInput, AAutocomplete, AInputNumber, ASelect, ACascader, ADatePicker, AMonthPicker, ARangePicker, AWeekPicker, ATimePicker, ASwitch, ARate | — |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ASelect 有效，下拉组件选项列表 | Array | — | [] |
 | optionProps | 只对 name=ASelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
