@@ -1,0 +1,11 @@
+.vxe-table-antd {
+  .vxe-cell {
+    & > .ant-input,
+    & > .ant-input-number,
+    & > .ant-select,
+    & > .ant-cascader-picker,
+    & > .ant-calendar-picker {
+      width: 100%;
+    }
+  }
+}
