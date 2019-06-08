@@ -12,6 +12,17 @@ function matchCascaderData (index, list, values, labels) {
   }
 }
 
+function formatDatePicker (defaultFormat) {
+  return function (h, { props = {} }, params) {
+    let { row, column } = params
+    let cellValue = XEUtils.get(row, column.property)
+    if (cellValue) {
+      cellValue = cellValue.format(props.format || defaultFormat)
+    }
+    return cellText(h, cellValue)
+  }
+}
+
 function getEvents (editRender, params) {
   let { name, events } = editRender
   let { $table } = params
@@ -173,14 +184,30 @@ const renderMap = {
   },
   ADatePicker: {
     renderEdit: defaultRender,
+    renderCell: formatDatePicker('YYYY-MM-DD')
+  },
+  AMonthPicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('YYYY-MM')
+  },
+  ARangePicker: {
+    renderEdit: defaultRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
       if (cellValue) {
-        cellValue = cellValue.format(props.format || 'YYYY-MM-DD')
+        cellValue = cellValue.map(date => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
       }
       return cellText(h, cellValue)
     }
+  },
+  AWeekPicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('YYYY-WW周')
+  },
+  ATimePicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('HH:mm:ss')
   },
   ARate: {
     renderEdit: defaultRender
@@ -218,7 +245,9 @@ function handleClearActivedEvent (params, evnt) {
     // 级联
     getEventTargetNode(evnt, document.body, 'ant-cascader-menus').flag ||
     // 日期
-    getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag
+    getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag ||
+    // 时间选择
+    getEventTargetNode(evnt, document.body, 'ant-time-picker-panel').flag
   ) {
     return false
   }

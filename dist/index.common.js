@@ -24,6 +24,23 @@ function matchCascaderData(index, list, values, labels) {
   }
 }
 
+function formatDatePicker(defaultFormat) {
+  return function (h, _ref, params) {
+    var _ref$props = _ref.props,
+        props = _ref$props === void 0 ? {} : _ref$props;
+    var row = params.row,
+        column = params.column;
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    if (cellValue) {
+      cellValue = cellValue.format(props.format || defaultFormat);
+    }
+
+    return cellText(h, cellValue);
+  };
+}
+
 function getEvents(editRender, params) {
   var name = editRender.name,
       events = editRender.events;
@@ -211,9 +228,9 @@ var renderMap = {
   },
   ACascader: {
     renderEdit: defaultRender,
-    renderCell: function renderCell(h, _ref, params) {
-      var _ref$props = _ref.props,
-          props = _ref$props === void 0 ? {} : _ref$props;
+    renderCell: function renderCell(h, _ref2, params) {
+      var _ref2$props = _ref2.props,
+          props = _ref2$props === void 0 ? {} : _ref2$props;
       var row = params.row,
           column = params.column;
 
@@ -227,20 +244,38 @@ var renderMap = {
   },
   ADatePicker: {
     renderEdit: defaultRender,
-    renderCell: function renderCell(h, _ref2, params) {
-      var _ref2$props = _ref2.props,
-          props = _ref2$props === void 0 ? {} : _ref2$props;
+    renderCell: formatDatePicker('YYYY-MM-DD')
+  },
+  AMonthPicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('YYYY-MM')
+  },
+  ARangePicker: {
+    renderEdit: defaultRender,
+    renderCell: function renderCell(h, _ref3, params) {
+      var _ref3$props = _ref3.props,
+          props = _ref3$props === void 0 ? {} : _ref3$props;
       var row = params.row,
           column = params.column;
 
       var cellValue = _xeUtils["default"].get(row, column.property);
 
       if (cellValue) {
-        cellValue = cellValue.format(props.format || 'YYYY-MM-DD');
+        cellValue = cellValue.map(function (date) {
+          return date.format(props.format || 'YYYY-MM-DD');
+        }).join(' ~ ');
       }
 
       return cellText(h, cellValue);
     }
+  },
+  AWeekPicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('YYYY-WW周')
+  },
+  ATimePicker: {
+    renderEdit: defaultRender,
+    renderCell: formatDatePicker('HH:mm:ss')
   },
   ARate: {
     renderEdit: defaultRender
@@ -285,16 +320,17 @@ function handleClearActivedEvent(params, evnt) {
   if ( // 下拉框
   getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag || // 级联
   getEventTargetNode(evnt, document.body, 'ant-cascader-menus').flag || // 日期
-  getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag) {
+  getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag || // 时间选择
+  getEventTargetNode(evnt, document.body, 'ant-time-picker-panel').flag) {
     return false;
   }
 }
 
 function VXETablePluginAntd() {}
 
-VXETablePluginAntd.install = function (_ref3) {
-  var interceptor = _ref3.interceptor,
-      renderer = _ref3.renderer;
+VXETablePluginAntd.install = function (_ref4) {
+  var interceptor = _ref4.interceptor,
+      renderer = _ref4.renderer;
   // 添加到渲染器
   renderer.mixin(renderMap); // 处理事件冲突
 
