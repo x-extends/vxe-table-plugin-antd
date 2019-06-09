@@ -209,6 +209,17 @@ const renderMap = {
     renderEdit: defaultRender,
     renderCell: formatDatePicker('HH:mm:ss')
   },
+  ATreeSelect: {
+    renderEdit: defaultRender,
+    renderCell (h, { props = {} }, params) {
+      let { row, column } = params
+      let cellValue = XEUtils.get(row, column.property)
+      if (cellValue && (props.treeCheckable || props.multiple)) {
+        cellValue = cellValue.join(';')
+      }
+      return cellText(h, cellValue)
+    }
+  },
   ARate: {
     renderEdit: defaultRender
   },

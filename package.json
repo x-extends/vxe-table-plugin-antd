@@ -1,6 +1,6 @@
 {
   "name": "vxe-table-plugin-antd",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "vxe-table renderer plugins for ant-design-vue.",
   "scripts": {
     "lib": "gulp build"

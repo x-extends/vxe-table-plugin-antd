@@ -277,6 +277,23 @@ var renderMap = {
     renderEdit: defaultRender,
     renderCell: formatDatePicker('HH:mm:ss')
   },
+  ATreeSelect: {
+    renderEdit: defaultRender,
+    renderCell: function renderCell(h, _ref4, params) {
+      var _ref4$props = _ref4.props,
+          props = _ref4$props === void 0 ? {} : _ref4$props;
+      var row = params.row,
+          column = params.column;
+
+      var cellValue = _xeUtils["default"].get(row, column.property);
+
+      if (cellValue && (props.treeCheckable || props.multiple)) {
+        cellValue = cellValue.join(';');
+      }
+
+      return cellText(h, cellValue);
+    }
+  },
   ARate: {
     renderEdit: defaultRender
   },
@@ -328,9 +345,9 @@ function handleClearActivedEvent(params, evnt) {
 
 function VXETablePluginAntd() {}
 
-VXETablePluginAntd.install = function (_ref4) {
-  var interceptor = _ref4.interceptor,
-      renderer = _ref4.renderer;
+VXETablePluginAntd.install = function (_ref5) {
+  var interceptor = _ref5.interceptor,
+      renderer = _ref5.renderer;
   // 添加到渲染器
   renderer.mixin(renderMap); // 处理事件冲突
 
