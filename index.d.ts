@@ -1,10 +1,10 @@
-export interface VXETablePluginElementOptions {
+export interface VXETablePluginAntdOptions {
 
 }
 
 /**
- * vxe-table renderer plugins for element-ui.
+ * vxe-table renderer plugins for ant-design-vue.
  */
-declare var VXETablePluginElement: VXETablePluginElementOptions;
+declare var VXETablePluginAntd: VXETablePluginAntdOptions;
 
-export default VXETablePluginElement;
+export default VXETablePluginAntd;

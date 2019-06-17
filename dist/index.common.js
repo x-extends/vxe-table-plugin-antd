@@ -63,7 +63,7 @@ function getEvents(editRender, params) {
   });
 
   if (events) {
-    Object.assign(on, _xeUtils["default"].objectMap(events, function (cb) {
+    _xeUtils["default"].assign(on, _xeUtils["default"].objectMap(events, function (cb) {
       return function () {
         cb.apply(null, [params].concat.apply(params, arguments));
       };
@@ -80,7 +80,7 @@ function defaultRender(h, editRender, params) {
   var props = editRender.props;
 
   if ($table.size) {
-    props = Object.assign({
+    props = _xeUtils["default"].assign({
       size: $table.size
     }, props);
   }
@@ -261,7 +261,7 @@ var renderMap = {
       var cellValue = _xeUtils["default"].get(row, column.property);
 
       if (cellValue) {
-        cellValue = cellValue.map(function (date) {
+        cellValue = _xeUtils["default"].map(cellValue, function (date) {
           return date.format(props.format || 'YYYY-MM-DD');
         }).join(' ~ ');
       }
