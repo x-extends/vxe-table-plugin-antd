@@ -46,7 +46,7 @@ VXETable.use(VXETablePluginAntd)
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | events | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
 
-## Demo
+## Cell demo
 
 默认直接使用 class=vxe-table-antd 既可，当然你也可以不引入默认样式，自行实现样式也是可以的。
 
@@ -105,6 +105,37 @@ export default {
         {
           'label': '广州',
           'value': 'guangzhou'
+        }
+      ]
+    }
+  }
+}
+```
+
+## Filter demo
+
+```html
+<vxe-table
+  border
+  height="600"
+  :data.sync="tableData">
+  <vxe-table-column type="index" width="60"></vxe-table-column>
+  <vxe-table-column prop="name" label="Name"></vxe-table-column>
+  <vxe-table-column prop="age" label="Age"></vxe-table-column>
+  <vxe-table-column prop="date" label="Date" :filters="[{data: []}]" :filter-render="{name: 'AInput'}"></vxe-table-column>
+</vxe-table>
+```
+
+```javascript
+export default {
+  data () {
+    return {
+      tableData: [
+        {
+          id: 100,
+          name: 'test',
+          age: 26,
+          date: null
         }
       ]
     }
