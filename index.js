@@ -23,7 +23,7 @@ function formatDatePicker (defaultFormat) {
   }
 }
 
-function getEvents (editRender, params) {
+function getCellEvents (editRender, params) {
   let { name, events } = editRender
   let { $table } = params
   let type = 'change'
@@ -32,8 +32,10 @@ function getEvents (editRender, params) {
       type = 'select'
       break
     case 'AInput':
-    case 'AInputNumber':
       type = 'input'
+      break
+    case 'AInputNumber':
+      type = 'change'
       break
   }
   let on = {
@@ -47,11 +49,11 @@ function getEvents (editRender, params) {
   return on
 }
 
-function defaultRender (h, editRender, params) {
+function defaultCellRender (h, editRender, params) {
   let { $table, row, column } = params
   let { props } = editRender
-  if ($table.size) {
-    props = XEUtils.assign({ size: $table.size }, props)
+  if ($table.vSize) {
+    props = XEUtils.assign({ size: $table.vSize }, props)
   }
   return [
     h(editRender.name, {
@@ -62,27 +64,87 @@ function defaultRender (h, editRender, params) {
           XEUtils.set(row, column.property, value)
         }
       },
-      on: getEvents(editRender, params)
+      on: getCellEvents(editRender, params)
     })
   ]
+}
+
+function getFilterEvents (on, filterRender, params) {
+  let { events } = filterRender
+  if (events) {
+    XEUtils.assign(on, XEUtils.objectMap(events, cb => function () {
+      cb.apply(null, [params].concat.apply(params, arguments))
+    }))
+  }
+  return on
+}
+
+function defaultFilterRender (h, filterRender, params, context) {
+  let { $table, column } = params
+  let { name, props } = filterRender
+  let type = 'input'
+  if ($table.vSize) {
+    props = XEUtils.assign({ size: $table.vSize }, props)
+  }
+  switch (name) {
+    case 'AAutoComplete':
+      type = 'select'
+      break
+    case 'AInputNumber':
+      type = 'change'
+      break
+  }
+  return column.filters.map(item => {
+    return h(name, {
+      props,
+      model: {
+        value: item.data,
+        callback (optionValue) {
+          item.data = optionValue
+        }
+      },
+      on: getFilterEvents({
+        [type] () {
+          context.changeMultipleOption({}, !!item.data, item)
+        }
+      }, filterRender, params)
+    })
+  })
+}
+
+function defaultFilterMethod ({ option, row, column }) {
+  let { data } = option
+  let cellValue = XEUtils.get(row, column.property)
+  return cellValue === data
 }
 
 function cellText (h, cellValue) {
   return ['' + (cellValue === null || cellValue === void 0 ? '' : cellValue)]
 }
 
+/**
+ * 渲染函数
+ * renderEdit(h, editRender, params, context)
+ * renderCell(h, editRender, params, context)
+ */
 const renderMap = {
   AAutoComplete: {
     autofocus: 'input.ant-input',
-    renderEdit: defaultRender
+    renderEdit: defaultCellRender,
+    renderFilter: defaultFilterRender,
+    filterMethod: defaultFilterMethod
   },
   AInput: {
     autofocus: 'input.ant-input',
-    renderEdit: defaultRender
+    renderEdit: defaultCellRender,
+    renderFilter: defaultFilterRender,
+    filterMethod: defaultFilterMethod
   },
   AInputNumber: {
     autofocus: 'input.ant-input-number-input',
-    renderEdit: defaultRender
+    renderEdit: defaultCellRender,
+    renderFilter: defaultFilterRender,
+    filterMethod: defaultFilterMethod
   },
   ASelect: {
     renderEdit (h, editRender, params) {
@@ -90,8 +152,8 @@ const renderMap = {
       let { $table, row, column } = params
       let labelProp = optionProps.label || 'label'
       let valueProp = optionProps.value || 'value'
-      if ($table.size) {
-        props = XEUtils.assign({ size: $table.size }, props)
+      if ($table.vSize) {
+        props = XEUtils.assign({ size: $table.vSize }, props)
       }
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
@@ -105,7 +167,7 @@ const renderMap = {
                 XEUtils.set(row, column.property, cellValue)
               }
             },
-            on: getEvents(editRender, params)
+            on: getCellEvents(editRender, params)
           }, XEUtils.map(optionGroups, (group, gIndex) => {
             return h('a-select-opt-group', {
               key: gIndex
@@ -135,7 +197,7 @@ const renderMap = {
               XEUtils.set(row, column.property, cellValue)
             }
           },
-          on: getEvents(editRender, params)
+          on: getCellEvents(editRender, params)
         }, XEUtils.map(options, (item, index) => {
           return h('a-select-option', {
             props: {
@@ -172,7 +234,7 @@ const renderMap = {
     }
   },
   ACascader: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -183,15 +245,15 @@ const renderMap = {
     }
   },
   ADatePicker: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell: formatDatePicker('YYYY-MM-DD')
   },
   AMonthPicker: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell: formatDatePicker('YYYY-MM')
   },
   ARangePicker: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -202,15 +264,15 @@ const renderMap = {
     }
   },
   AWeekPicker: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell: formatDatePicker('YYYY-WW周')
   },
   ATimePicker: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell: formatDatePicker('HH:mm:ss')
   },
   ATreeSelect: {
-    renderEdit: defaultRender,
+    renderEdit: defaultCellRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -221,35 +283,29 @@ const renderMap = {
     }
   },
   ARate: {
-    renderEdit: defaultRender
+    renderEdit: defaultCellRender
   },
   ASwitch: {
-    renderEdit: defaultRender
+    renderEdit: defaultCellRender
   }
-}
-
-function hasClass (elem, cls) {
-  return elem && elem.className && elem.className.split && elem.className.split(' ').indexOf(cls) > -1
-}
-
-function getEventTargetNode (evnt, container, queryCls) {
-  let targetElem
-  let target = evnt.target
-  while (target && target.nodeType && target !== document) {
-    if (queryCls && hasClass(target, queryCls)) {
-      targetElem = target
-    } else if (target === container) {
-      return { flag: queryCls ? !!targetElem : true, container, targetElem: targetElem }
-    }
-    target = target.parentNode
-  }
-  return { flag: false }
 }
 
 /**
- * 事件兼容性处理
+ * 筛选兼容性处理
  */
-function handleClearActivedEvent (params, evnt) {
+function handleClearFilterEvent (params, evnt, { getEventTargetNode }) {
+  if (
+    // 下拉框
+    getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag
+  ) {
+    return false
+  }
+}
+
+/**
+ * 单元格兼容性处理
+ */
+function handleClearActivedEvent (params, evnt, { getEventTargetNode }) {
   if (
     // 下拉框
     getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag ||
@@ -270,6 +326,7 @@ VXETablePluginAntd.install = function ({ interceptor, renderer }) {
   // 添加到渲染器
   renderer.mixin(renderMap)
   // 处理事件冲突
+  interceptor.add('event.clear_filter', handleClearFilterEvent)
   interceptor.add('event.clear_actived', handleClearActivedEvent)
 }
 
