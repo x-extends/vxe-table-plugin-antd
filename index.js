@@ -293,7 +293,8 @@ const renderMap = {
 /**
  * 筛选兼容性处理
  */
-function handleClearFilterEvent (params, evnt, { getEventTargetNode }) {
+function handleClearFilterEvent (params, evnt, context) {
+  let { getEventTargetNode } = context
   if (
     // 下拉框
     getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag
@@ -305,7 +306,8 @@ function handleClearFilterEvent (params, evnt, { getEventTargetNode }) {
 /**
  * 单元格兼容性处理
  */
-function handleClearActivedEvent (params, evnt, { getEventTargetNode }) {
+function handleClearActivedEvent (params, evnt, context) {
+  let { getEventTargetNode } = context
   if (
     // 下拉框
     getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag ||
