@@ -1,11 +1,68 @@
+%ResetBorder {
+  border: 0;
+  box-shadow: none;
+}
 .vxe-table-antd {
   .vxe-cell {
     & > .ant-input,
     & > .ant-input-number,
     & > .ant-select,
     & > .ant-cascader-picker,
-    & > .ant-calendar-picker {
+    & > .ant-calendar-picker,
+    & > .ant-time-picker {
       width: 100%;
+    }
+  }
+  &.c--highlight {
+    .vxe-cell {
+      & > .ant-input,
+      & > .ant-input-number {
+        padding: 0;
+        @extend %ResetBorder;
+      }
+      & > .ant-select {
+        .ant-input {
+          padding: 0;
+          @extend %ResetBorder;
+        }
+      }
+      & > .ant-input-number {
+        .ant-input-number-input {
+          padding: 0;
+        }
+        .ant-input-number-handler-wrap,
+        .ant-input-number-handler-down {
+          @extend %ResetBorder;
+        }
+      }
+      & > .ant-select {
+        .ant-select-selection {
+          @extend %ResetBorder;
+          .ant-select-selection__rendered {
+            margin: 0;
+          }
+        }
+      }
+      & > .ant-cascader-picker {
+        .ant-input {
+          @extend %ResetBorder;
+        }
+        .ant-cascader-picker-label {
+          padding: 0;
+        }
+      }
+      & > .ant-calendar-picker {
+        .ant-calendar-picker-input {
+          padding: 0;
+          @extend %ResetBorder;
+        }
+      }
+      & > .ant-time-picker {
+        .ant-time-picker-input {
+          padding: 0;
+          @extend %ResetBorder;
+        }
+      }
     }
   }
 }
