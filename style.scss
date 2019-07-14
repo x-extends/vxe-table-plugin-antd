@@ -13,7 +13,8 @@
       width: 100%;
     }
   }
-  &.c--highlight {
+  &.c--highlight,
+  .vxe-table.c--highlight {
     .vxe-cell {
       & > .ant-input,
       & > .ant-input-number {

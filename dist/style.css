@@ -1,6 +1,15 @@
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input,
-.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number, .vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-wrap,
-.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-down, .vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-select-selection, .vxe-table-antd.c--highlight .vxe-cell > .ant-cascader-picker .ant-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input-number, .vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-select .ant-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-wrap,
+.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-down,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-wrap,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input-number .ant-input-number-handler-down, .vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-select-selection,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-select .ant-select-selection, .vxe-table-antd.c--highlight .vxe-cell > .ant-cascader-picker .ant-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-cascader-picker .ant-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input, .vxe-table-antd.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input {
   border: 0;
   box-shadow: none; }
 
@@ -13,23 +22,31 @@
   width: 100%; }
 
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input,
-.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input-number {
   padding: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-input {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-select .ant-input {
   padding: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-input {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-input-number .ant-input-number-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input-number .ant-input-number-input {
   padding: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-select-selection .ant-select-selection__rendered {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-select .ant-select-selection .ant-select-selection__rendered,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-select .ant-select-selection .ant-select-selection__rendered {
   margin: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-cascader-picker .ant-cascader-picker-label {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-cascader-picker .ant-cascader-picker-label,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-cascader-picker .ant-cascader-picker-label {
   padding: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input {
   padding: 0; }
 
-.vxe-table-antd.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input {
+.vxe-table-antd.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input,
+.vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-time-picker .ant-time-picker-input {
   padding: 0; }
