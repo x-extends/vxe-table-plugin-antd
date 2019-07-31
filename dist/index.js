@@ -159,7 +159,7 @@
           }
         },
         on: getFilterEvents(_defineProperty({}, type, function () {
-          context.changeMultipleOption({}, !!item.data, item);
+          context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, !!item.data, item);
         }), filterRender, params)
       });
     });
