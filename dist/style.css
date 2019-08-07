@@ -13,6 +13,11 @@
   border: 0;
   box-shadow: none; }
 
+.vxe-table-antd .vxe-table--filter-body > .ant-input,
+.vxe-table-antd .vxe-table--filter-body > .ant-input-number,
+.vxe-table-antd .vxe-table--filter-body > .ant-select {
+  width: 180px; }
+
 .vxe-table-antd .vxe-cell > .ant-input,
 .vxe-table-antd .vxe-cell > .ant-input-number,
 .vxe-table-antd .vxe-cell > .ant-select,

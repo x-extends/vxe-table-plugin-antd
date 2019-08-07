@@ -3,6 +3,13 @@
   box-shadow: none;
 }
 .vxe-table-antd {
+  .vxe-table--filter-body {
+    & > .ant-input,
+    & > .ant-input-number,
+    & > .ant-select {
+      width: 180px;
+    }
+  }
   .vxe-cell {
     & > .ant-input,
     & > .ant-input-number,

@@ -41,6 +41,14 @@ function formatDatePicker(defaultFormat) {
   };
 }
 
+function getProps(_ref2, _ref3) {
+  var $table = _ref2.$table;
+  var props = _ref3.props;
+  return _xeUtils["default"].assign($table.vSize ? {
+    size: $table.vSize
+  } : {}, props);
+}
+
 function getCellEvents(editRender, params) {
   var name = editRender.name,
       events = editRender.events;
@@ -77,17 +85,9 @@ function getCellEvents(editRender, params) {
 }
 
 function defaultCellRender(h, editRender, params) {
-  var $table = params.$table,
-      row = params.row,
+  var row = params.row,
       column = params.column;
-  var props = editRender.props;
-
-  if ($table.vSize) {
-    props = _xeUtils["default"].assign({
-      size: $table.vSize
-    }, props);
-  }
-
+  var props = getProps(params, editRender);
   return [h(editRender.name, {
     props: props,
     model: {
@@ -115,17 +115,10 @@ function getFilterEvents(on, filterRender, params) {
 }
 
 function defaultFilterRender(h, filterRender, params, context) {
-  var $table = params.$table,
-      column = params.column;
-  var name = filterRender.name,
-      props = filterRender.props;
+  var column = params.column;
+  var name = filterRender.name;
   var type = 'input';
-
-  if ($table.vSize) {
-    props = _xeUtils["default"].assign({
-      size: $table.vSize
-    }, props);
-  }
+  var props = getProps(params, filterRender);
 
   switch (name) {
     case 'AAutoComplete':
@@ -147,21 +140,38 @@ function defaultFilterRender(h, filterRender, params, context) {
         }
       },
       on: getFilterEvents(_defineProperty({}, type, function () {
-        context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, !!item.data, item);
+        handleConfirmFilter(context, column, !!item.data, item);
       }), filterRender, params)
     });
   });
 }
 
-function defaultFilterMethod(_ref2) {
-  var option = _ref2.option,
-      row = _ref2.row,
-      column = _ref2.column;
+function handleConfirmFilter(context, column, checked, item) {
+  context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, checked, item);
+}
+
+function defaultFilterMethod(_ref4) {
+  var option = _ref4.option,
+      row = _ref4.row,
+      column = _ref4.column;
   var data = option.data;
 
   var cellValue = _xeUtils["default"].get(row, column.property);
 
   return cellValue === data;
+}
+
+function renderOptions(h, options, optionProps) {
+  var labelProp = optionProps.label || 'label';
+  var valueProp = optionProps.value || 'value';
+  return _xeUtils["default"].map(options, function (item, index) {
+    return h('a-select-option', {
+      props: {
+        value: item[valueProp]
+      },
+      key: index
+    }, item[labelProp]);
+  });
 }
 
 function cellText(h, cellValue) {
@@ -195,23 +205,13 @@ var renderMap = {
     renderEdit: function renderEdit(h, editRender, params) {
       var options = editRender.options,
           optionGroups = editRender.optionGroups,
-          _editRender$props = editRender.props,
-          props = _editRender$props === void 0 ? {} : _editRender$props,
           _editRender$optionPro = editRender.optionProps,
           optionProps = _editRender$optionPro === void 0 ? {} : _editRender$optionPro,
           _editRender$optionGro = editRender.optionGroupProps,
           optionGroupProps = _editRender$optionGro === void 0 ? {} : _editRender$optionGro;
-      var $table = params.$table,
-          row = params.row,
+      var row = params.row,
           column = params.column;
-      var labelProp = optionProps.label || 'label';
-      var valueProp = optionProps.value || 'value';
-
-      if ($table.vSize) {
-        props = _xeUtils["default"].assign({
-          size: $table.vSize
-        }, props);
-      }
+      var props = getProps(params, editRender);
 
       if (optionGroups) {
         var groupOptions = optionGroupProps.options || 'options';
@@ -230,14 +230,7 @@ var renderMap = {
             key: gIndex
           }, [h('span', {
             slot: 'label'
-          }, group[groupLabel])].concat(_xeUtils["default"].map(group[groupOptions], function (item, index) {
-            return h('a-select-option', {
-              props: {
-                value: item[valueProp]
-              },
-              key: index
-            }, item[labelProp]);
-          })));
+          }, group[groupLabel])].concat(renderOptions(h, group[groupOptions], optionProps)));
         }))];
       }
 
@@ -250,20 +243,13 @@ var renderMap = {
           }
         },
         on: getCellEvents(editRender, params)
-      }, _xeUtils["default"].map(options, function (item, index) {
-        return h('a-select-option', {
-          props: {
-            value: item[valueProp]
-          },
-          key: index
-        }, item[labelProp]);
-      }))];
+      }, renderOptions(h, options, optionProps))];
     },
     renderCell: function renderCell(h, editRender, params) {
       var options = editRender.options,
           optionGroups = editRender.optionGroups,
-          _editRender$props2 = editRender.props,
-          props = _editRender$props2 === void 0 ? {} : _editRender$props2,
+          _editRender$props = editRender.props,
+          props = _editRender$props === void 0 ? {} : _editRender$props,
           _editRender$optionPro2 = editRender.optionProps,
           optionProps = _editRender$optionPro2 === void 0 ? {} : _editRender$optionPro2,
           _editRender$optionGro2 = editRender.optionGroupProps,
@@ -301,13 +287,89 @@ var renderMap = {
       }
 
       return cellText(h, '');
+    },
+    renderFilter: function renderFilter(h, filterRender, params, context) {
+      var options = filterRender.options,
+          optionGroups = filterRender.optionGroups,
+          _filterRender$optionP = filterRender.optionProps,
+          optionProps = _filterRender$optionP === void 0 ? {} : _filterRender$optionP,
+          _filterRender$optionG = filterRender.optionGroupProps,
+          optionGroupProps = _filterRender$optionG === void 0 ? {} : _filterRender$optionG;
+      var column = params.column;
+      var props = getProps(params, filterRender);
+
+      if (optionGroups) {
+        var groupOptions = optionGroupProps.options || 'options';
+        var groupLabel = optionGroupProps.label || 'label';
+        return column.filters.map(function (item) {
+          return h('a-select', {
+            props: props,
+            model: {
+              value: item.data,
+              callback: function callback(optionValue) {
+                item.data = optionValue;
+              }
+            },
+            on: getFilterEvents({
+              change: function change(value) {
+                handleConfirmFilter(context, column, value && value.length > 0, item);
+              }
+            }, filterRender, params)
+          }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
+            return h('a-select-opt-group', {
+              key: gIndex
+            }, [h('span', {
+              slot: 'label'
+            }, group[groupLabel])].concat(renderOptions(h, group[groupOptions], optionProps)));
+          }));
+        });
+      }
+
+      return column.filters.map(function (item) {
+        return h('a-select', {
+          props: props,
+          model: {
+            value: item.data,
+            callback: function callback(optionValue) {
+              item.data = optionValue;
+            }
+          },
+          on: getFilterEvents({
+            change: function change(value) {
+              handleConfirmFilter(context, column, value && value.length > 0, item);
+            }
+          }, filterRender, params)
+        }, renderOptions(h, options, optionProps));
+      });
+    },
+    filterMethod: function filterMethod(_ref5) {
+      var option = _ref5.option,
+          row = _ref5.row,
+          column = _ref5.column;
+      var data = option.data;
+      var property = column.property,
+          filterRender = column.filterRender;
+      var _filterRender$props = filterRender.props,
+          props = _filterRender$props === void 0 ? {} : _filterRender$props;
+
+      var cellValue = _xeUtils["default"].get(row, property);
+
+      if (props.mode === 'multiple') {
+        if (_xeUtils["default"].isArray(cellValue)) {
+          return _xeUtils["default"].includeArrays(cellValue, data);
+        }
+
+        return data.indexOf(cellValue) > -1;
+      }
+
+      return cellValue === data;
     }
   },
   ACascader: {
     renderEdit: defaultCellRender,
-    renderCell: function renderCell(h, _ref3, params) {
-      var _ref3$props = _ref3.props,
-          props = _ref3$props === void 0 ? {} : _ref3$props;
+    renderCell: function renderCell(h, _ref6, params) {
+      var _ref6$props = _ref6.props,
+          props = _ref6$props === void 0 ? {} : _ref6$props;
       var row = params.row,
           column = params.column;
 
@@ -329,9 +391,9 @@ var renderMap = {
   },
   ARangePicker: {
     renderEdit: defaultCellRender,
-    renderCell: function renderCell(h, _ref4, params) {
-      var _ref4$props = _ref4.props,
-          props = _ref4$props === void 0 ? {} : _ref4$props;
+    renderCell: function renderCell(h, _ref7, params) {
+      var _ref7$props = _ref7.props,
+          props = _ref7$props === void 0 ? {} : _ref7$props;
       var row = params.row,
           column = params.column;
 
@@ -356,9 +418,9 @@ var renderMap = {
   },
   ATreeSelect: {
     renderEdit: defaultCellRender,
-    renderCell: function renderCell(h, _ref5, params) {
-      var _ref5$props = _ref5.props,
-          props = _ref5$props === void 0 ? {} : _ref5$props;
+    renderCell: function renderCell(h, _ref8, params) {
+      var _ref8$props = _ref8.props,
+          props = _ref8$props === void 0 ? {} : _ref8$props;
       var row = params.row,
           column = params.column;
 
@@ -378,25 +440,12 @@ var renderMap = {
     renderEdit: defaultCellRender
   }
   /**
-   * 筛选兼容性处理
+   * 事件兼容性处理
    */
 
 };
 
-function handleClearFilterEvent(params, evnt, context) {
-  var getEventTargetNode = context.getEventTargetNode;
-
-  if ( // 下拉框
-  getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag) {
-    return false;
-  }
-}
-/**
- * 单元格兼容性处理
- */
-
-
-function handleClearActivedEvent(params, evnt, context) {
+function handleClearEvent(params, evnt, context) {
   var getEventTargetNode = context.getEventTargetNode;
 
   if ( // 下拉框
@@ -408,16 +457,16 @@ function handleClearActivedEvent(params, evnt, context) {
   }
 }
 
-function VXETablePluginAntd() {}
+var VXETablePluginAntd = {
+  install: function install(_ref9) {
+    var interceptor = _ref9.interceptor,
+        renderer = _ref9.renderer;
+    // 添加到渲染器
+    renderer.mixin(renderMap); // 处理事件冲突
 
-VXETablePluginAntd.install = function (_ref6) {
-  var interceptor = _ref6.interceptor,
-      renderer = _ref6.renderer;
-  // 添加到渲染器
-  renderer.mixin(renderMap); // 处理事件冲突
-
-  interceptor.add('event.clear_filter', handleClearFilterEvent);
-  interceptor.add('event.clear_actived', handleClearActivedEvent);
+    interceptor.add('event.clear_filter', handleClearEvent);
+    interceptor.add('event.clear_actived', handleClearEvent);
+  }
 };
 
 if (typeof window !== 'undefined' && window.VXETable) {

@@ -23,6 +23,10 @@ function formatDatePicker (defaultFormat) {
   }
 }
 
+function getProps ({ $table }, { props }) {
+  return XEUtils.assign($table.vSize ? { size: $table.vSize } : {}, props)
+}
+
 function getCellEvents (editRender, params) {
   let { name, events } = editRender
   let { $table } = params
@@ -50,11 +54,8 @@ function getCellEvents (editRender, params) {
 }
 
 function defaultCellRender (h, editRender, params) {
-  let { $table, row, column } = params
-  let { props } = editRender
-  if ($table.vSize) {
-    props = XEUtils.assign({ size: $table.vSize }, props)
-  }
+  let { row, column } = params
+  let props = getProps(params, editRender)
   return [
     h(editRender.name, {
       props,
@@ -80,12 +81,10 @@ function getFilterEvents (on, filterRender, params) {
 }
 
 function defaultFilterRender (h, filterRender, params, context) {
-  let { $table, column } = params
-  let { name, props } = filterRender
+  let { column } = params
+  let { name } = filterRender
   let type = 'input'
-  if ($table.vSize) {
-    props = XEUtils.assign({ size: $table.vSize }, props)
-  }
+  let props = getProps(params, filterRender)
   switch (name) {
     case 'AAutoComplete':
       type = 'select'
@@ -105,17 +104,34 @@ function defaultFilterRender (h, filterRender, params, context) {
       },
       on: getFilterEvents({
         [type] () {
-          context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, !!item.data, item)
+          handleConfirmFilter(context, column, !!item.data, item)
         }
       }, filterRender, params)
     })
   })
 }
 
+function handleConfirmFilter (context, column, checked, item) {
+  context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, checked, item)
+}
+
 function defaultFilterMethod ({ option, row, column }) {
   let { data } = option
   let cellValue = XEUtils.get(row, column.property)
   return cellValue === data
+}
+
+function renderOptions (h, options, optionProps) {
+  let labelProp = optionProps.label || 'label'
+  let valueProp = optionProps.value || 'value'
+  return XEUtils.map(options, (item, index) => {
+    return h('a-select-option', {
+      props: {
+        value: item[valueProp]
+      },
+      key: index
+    }, item[labelProp])
+  })
 }
 
 function cellText (h, cellValue) {
@@ -146,13 +162,9 @@ const renderMap = {
   },
   ASelect: {
     renderEdit (h, editRender, params) {
-      let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = editRender
-      let { $table, row, column } = params
-      let labelProp = optionProps.label || 'label'
-      let valueProp = optionProps.value || 'value'
-      if ($table.vSize) {
-        props = XEUtils.assign({ size: $table.vSize }, props)
-      }
+      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = editRender
+      let { row, column } = params
+      let props = getProps(params, editRender)
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
         let groupLabel = optionGroupProps.label || 'label'
@@ -174,14 +186,7 @@ const renderMap = {
                 slot: 'label'
               }, group[groupLabel])
             ].concat(
-              XEUtils.map(group[groupOptions], (item, index) => {
-                return h('a-select-option', {
-                  props: {
-                    value: item[valueProp]
-                  },
-                  key: index
-                }, item[labelProp])
-              })
+              renderOptions(h, group[groupOptions], optionProps)
             ))
           }))
         ]
@@ -196,14 +201,7 @@ const renderMap = {
             }
           },
           on: getCellEvents(editRender, params)
-        }, XEUtils.map(options, (item, index) => {
-          return h('a-select-option', {
-            props: {
-              value: item[valueProp]
-            },
-            key: index
-          }, item[labelProp])
-        }))
+        }, renderOptions(h, options, optionProps))
       ]
     },
     renderCell (h, editRender, params) {
@@ -229,6 +227,70 @@ const renderMap = {
         }).join(';'))
       }
       return cellText(h, '')
+    },
+    renderFilter (h, filterRender, params, context) {
+      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = filterRender
+      let { column } = params
+      let props = getProps(params, filterRender)
+      if (optionGroups) {
+        let groupOptions = optionGroupProps.options || 'options'
+        let groupLabel = optionGroupProps.label || 'label'
+        return column.filters.map(item => {
+          return h('a-select', {
+            props,
+            model: {
+              value: item.data,
+              callback (optionValue) {
+                item.data = optionValue
+              }
+            },
+            on: getFilterEvents({
+              change (value) {
+                handleConfirmFilter(context, column, value && value.length > 0, item)
+              }
+            }, filterRender, params)
+          }, XEUtils.map(optionGroups, (group, gIndex) => {
+            return h('a-select-opt-group', {
+              key: gIndex
+            }, [
+              h('span', {
+                slot: 'label'
+              }, group[groupLabel])
+            ].concat(
+              renderOptions(h, group[groupOptions], optionProps)
+            ))
+          }))
+        })
+      }
+      return column.filters.map(item => {
+        return h('a-select', {
+          props,
+          model: {
+            value: item.data,
+            callback (optionValue) {
+              item.data = optionValue
+            }
+          },
+          on: getFilterEvents({
+            change (value) {
+              handleConfirmFilter(context, column, value && value.length > 0, item)
+            }
+          }, filterRender, params)
+        }, renderOptions(h, options, optionProps))
+      })
+    },
+    filterMethod ({ option, row, column }) {
+      let { data } = option
+      let { property, filterRender } = column
+      let { props = {} } = filterRender
+      let cellValue = XEUtils.get(row, property)
+      if (props.mode === 'multiple') {
+        if (XEUtils.isArray(cellValue)) {
+          return XEUtils.includeArrays(cellValue, data)
+        }
+        return data.indexOf(cellValue) > -1
+      }
+      return cellValue === data
     }
   },
   ACascader: {
@@ -289,22 +351,9 @@ const renderMap = {
 }
 
 /**
- * 筛选兼容性处理
+ * 事件兼容性处理
  */
-function handleClearFilterEvent (params, evnt, context) {
-  let { getEventTargetNode } = context
-  if (
-    // 下拉框
-    getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag
-  ) {
-    return false
-  }
-}
-
-/**
- * 单元格兼容性处理
- */
-function handleClearActivedEvent (params, evnt, context) {
+function handleClearEvent (params, evnt, context) {
   let { getEventTargetNode } = context
   if (
     // 下拉框
@@ -320,14 +369,14 @@ function handleClearActivedEvent (params, evnt, context) {
   }
 }
 
-function VXETablePluginAntd () {}
-
-VXETablePluginAntd.install = function ({ interceptor, renderer }) {
-  // 添加到渲染器
-  renderer.mixin(renderMap)
-  // 处理事件冲突
-  interceptor.add('event.clear_filter', handleClearFilterEvent)
-  interceptor.add('event.clear_actived', handleClearActivedEvent)
+const VXETablePluginAntd = {
+  install ({ interceptor, renderer }) {
+    // 添加到渲染器
+    renderer.mixin(renderMap)
+    // 处理事件冲突
+    interceptor.add('event.clear_filter', handleClearEvent)
+    interceptor.add('event.clear_actived', handleClearEvent)
+  }
 }
 
 if (typeof window !== 'undefined' && window.VXETable) {
