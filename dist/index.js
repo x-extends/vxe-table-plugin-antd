@@ -61,9 +61,9 @@
     } : {}, props);
   }
 
-  function getCellEvents(editRender, params) {
-    var name = editRender.name,
-        events = editRender.events;
+  function getCellEvents(renderOpts, params) {
+    var name = renderOpts.name,
+        events = renderOpts.events;
     var $table = params.$table;
     var type = 'change';
 
@@ -96,12 +96,12 @@
     return on;
   }
 
-  function defaultCellRender(h, editRender, params) {
+  function defaultCellRender(h, renderOpts, params) {
     var row = params.row,
         column = params.column;
-    var attrs = editRender.attrs;
-    var props = getProps(params, editRender);
-    return [h(editRender.name, {
+    var attrs = renderOpts.attrs;
+    var props = getProps(params, renderOpts);
+    return [h(renderOpts.name, {
       props: props,
       attrs: attrs,
       model: {
@@ -110,12 +110,12 @@
           _xeUtils["default"].set(row, column.property, value);
         }
       },
-      on: getCellEvents(editRender, params)
+      on: getCellEvents(renderOpts, params)
     })];
   }
 
-  function getFilterEvents(on, filterRender, params) {
-    var events = filterRender.events;
+  function getFilterEvents(on, renderOpts, params) {
+    var events = renderOpts.events;
 
     if (events) {
       _xeUtils["default"].assign(on, _xeUtils["default"].objectMap(events, function (cb) {
@@ -128,11 +128,11 @@
     return on;
   }
 
-  function defaultFilterRender(h, filterRender, params, context) {
+  function defaultFilterRender(h, renderOpts, params, context) {
     var column = params.column;
-    var name = filterRender.name,
-        attrs = filterRender.attrs;
-    var props = getProps(params, filterRender);
+    var name = renderOpts.name,
+        attrs = renderOpts.attrs;
+    var props = getProps(params, renderOpts);
     var type = 'change';
 
     switch (name) {
@@ -161,7 +161,7 @@
         },
         on: getFilterEvents(_defineProperty({}, type, function () {
           handleConfirmFilter(context, column, !!item.data, item);
-        }), filterRender, params)
+        }), renderOpts, params)
       });
     });
   }
@@ -205,34 +205,37 @@
   var renderMap = {
     AAutoComplete: {
       autofocus: 'input.ant-input',
+      renderDefault: defaultCellRender,
       renderEdit: defaultCellRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     AInput: {
       autofocus: 'input.ant-input',
+      renderDefault: defaultCellRender,
       renderEdit: defaultCellRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     AInputNumber: {
       autofocus: 'input.ant-input-number-input',
+      renderDefault: defaultCellRender,
       renderEdit: defaultCellRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     ASelect: {
-      renderEdit: function renderEdit(h, editRender, params) {
-        var options = editRender.options,
-            optionGroups = editRender.optionGroups,
-            _editRender$optionPro = editRender.optionProps,
-            optionProps = _editRender$optionPro === void 0 ? {} : _editRender$optionPro,
-            _editRender$optionGro = editRender.optionGroupProps,
-            optionGroupProps = _editRender$optionGro === void 0 ? {} : _editRender$optionGro;
+      renderEdit: function renderEdit(h, renderOpts, params) {
+        var options = renderOpts.options,
+            optionGroups = renderOpts.optionGroups,
+            _renderOpts$optionPro = renderOpts.optionProps,
+            optionProps = _renderOpts$optionPro === void 0 ? {} : _renderOpts$optionPro,
+            _renderOpts$optionGro = renderOpts.optionGroupProps,
+            optionGroupProps = _renderOpts$optionGro === void 0 ? {} : _renderOpts$optionGro;
         var row = params.row,
             column = params.column;
-        var attrs = editRender.attrs;
-        var props = getProps(params, editRender);
+        var attrs = renderOpts.attrs;
+        var props = getProps(params, renderOpts);
 
         if (optionGroups) {
           var groupOptions = optionGroupProps.options || 'options';
@@ -246,7 +249,7 @@
                 _xeUtils["default"].set(row, column.property, cellValue);
               }
             },
-            on: getCellEvents(editRender, params)
+            on: getCellEvents(renderOpts, params)
           }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
             return h('a-select-opt-group', {
               key: gIndex
@@ -265,18 +268,18 @@
               _xeUtils["default"].set(row, column.property, cellValue);
             }
           },
-          on: getCellEvents(editRender, params)
+          on: getCellEvents(renderOpts, params)
         }, renderOptions(h, options, optionProps))];
       },
-      renderCell: function renderCell(h, editRender, params) {
-        var options = editRender.options,
-            optionGroups = editRender.optionGroups,
-            _editRender$props = editRender.props,
-            props = _editRender$props === void 0 ? {} : _editRender$props,
-            _editRender$optionPro2 = editRender.optionProps,
-            optionProps = _editRender$optionPro2 === void 0 ? {} : _editRender$optionPro2,
-            _editRender$optionGro2 = editRender.optionGroupProps,
-            optionGroupProps = _editRender$optionGro2 === void 0 ? {} : _editRender$optionGro2;
+      renderCell: function renderCell(h, renderOpts, params) {
+        var options = renderOpts.options,
+            optionGroups = renderOpts.optionGroups,
+            _renderOpts$props = renderOpts.props,
+            props = _renderOpts$props === void 0 ? {} : _renderOpts$props,
+            _renderOpts$optionPro2 = renderOpts.optionProps,
+            optionProps = _renderOpts$optionPro2 === void 0 ? {} : _renderOpts$optionPro2,
+            _renderOpts$optionGro2 = renderOpts.optionGroupProps,
+            optionGroupProps = _renderOpts$optionGro2 === void 0 ? {} : _renderOpts$optionGro2;
         var row = params.row,
             column = params.column;
         var labelProp = optionProps.label || 'label';
@@ -311,16 +314,16 @@
 
         return cellText(h, '');
       },
-      renderFilter: function renderFilter(h, filterRender, params, context) {
-        var options = filterRender.options,
-            optionGroups = filterRender.optionGroups,
-            _filterRender$optionP = filterRender.optionProps,
-            optionProps = _filterRender$optionP === void 0 ? {} : _filterRender$optionP,
-            _filterRender$optionG = filterRender.optionGroupProps,
-            optionGroupProps = _filterRender$optionG === void 0 ? {} : _filterRender$optionG;
+      renderFilter: function renderFilter(h, renderOpts, params, context) {
+        var options = renderOpts.options,
+            optionGroups = renderOpts.optionGroups,
+            _renderOpts$optionPro3 = renderOpts.optionProps,
+            optionProps = _renderOpts$optionPro3 === void 0 ? {} : _renderOpts$optionPro3,
+            _renderOpts$optionGro3 = renderOpts.optionGroupProps,
+            optionGroupProps = _renderOpts$optionGro3 === void 0 ? {} : _renderOpts$optionGro3;
         var column = params.column;
-        var attrs = filterRender.attrs;
-        var props = getProps(params, filterRender);
+        var attrs = renderOpts.attrs;
+        var props = getProps(params, renderOpts);
 
         if (optionGroups) {
           var groupOptions = optionGroupProps.options || 'options';
@@ -339,7 +342,7 @@
                 change: function change(value) {
                   handleConfirmFilter(context, column, value && value.length > 0, item);
                 }
-              }, filterRender, params)
+              }, renderOpts, params)
             }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
               return h('a-select-opt-group', {
                 key: gIndex
@@ -364,7 +367,7 @@
               change: function change(value) {
                 handleConfirmFilter(context, column, value && value.length > 0, item);
               }
-            }, filterRender, params)
+            }, renderOpts, params)
           }, renderOptions(h, options, optionProps));
         });
       },
@@ -374,9 +377,9 @@
             column = _ref5.column;
         var data = option.data;
         var property = column.property,
-            filterRender = column.filterRender;
-        var _filterRender$props = filterRender.props,
-            props = _filterRender$props === void 0 ? {} : _filterRender$props;
+            renderOpts = column.renderOpts;
+        var _renderOpts$props2 = renderOpts.props,
+            props = _renderOpts$props2 === void 0 ? {} : _renderOpts$props2;
 
         var cellValue = _xeUtils["default"].get(row, property);
 
@@ -460,11 +463,13 @@
       }
     },
     ARate: {
+      renderDefault: defaultCellRender,
       renderEdit: defaultCellRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     ASwitch: {
+      renderDefault: defaultCellRender,
       renderEdit: defaultCellRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod

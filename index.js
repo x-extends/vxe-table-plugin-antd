@@ -27,8 +27,8 @@ function getProps ({ $table }, { props }) {
   return XEUtils.assign($table.vSize ? { size: $table.vSize } : {}, props)
 }
 
-function getCellEvents (editRender, params) {
-  let { name, events } = editRender
+function getCellEvents (renderOpts, params) {
+  let { name, events } = renderOpts
   let { $table } = params
   let type = 'change'
   switch (name) {
@@ -53,12 +53,12 @@ function getCellEvents (editRender, params) {
   return on
 }
 
-function defaultCellRender (h, editRender, params) {
+function defaultCellRender (h, renderOpts, params) {
   let { row, column } = params
-  let { attrs } = editRender
-  let props = getProps(params, editRender)
+  let { attrs } = renderOpts
+  let props = getProps(params, renderOpts)
   return [
-    h(editRender.name, {
+    h(renderOpts.name, {
       props,
       attrs,
       model: {
@@ -67,13 +67,13 @@ function defaultCellRender (h, editRender, params) {
           XEUtils.set(row, column.property, value)
         }
       },
-      on: getCellEvents(editRender, params)
+      on: getCellEvents(renderOpts, params)
     })
   ]
 }
 
-function getFilterEvents (on, filterRender, params) {
-  let { events } = filterRender
+function getFilterEvents (on, renderOpts, params) {
+  let { events } = renderOpts
   if (events) {
     XEUtils.assign(on, XEUtils.objectMap(events, cb => function () {
       cb.apply(null, [params].concat.apply(params, arguments))
@@ -82,10 +82,10 @@ function getFilterEvents (on, filterRender, params) {
   return on
 }
 
-function defaultFilterRender (h, filterRender, params, context) {
+function defaultFilterRender (h, renderOpts, params, context) {
   let { column } = params
-  let { name, attrs } = filterRender
-  let props = getProps(params, filterRender)
+  let { name, attrs } = renderOpts
+  let props = getProps(params, renderOpts)
   let type = 'change'
   switch (name) {
     case 'AAutoComplete':
@@ -112,7 +112,7 @@ function defaultFilterRender (h, filterRender, params, context) {
         [type] () {
           handleConfirmFilter(context, column, !!item.data, item)
         }
-      }, filterRender, params)
+      }, renderOpts, params)
     })
   })
 }
@@ -150,28 +150,31 @@ function cellText (h, cellValue) {
 const renderMap = {
   AAutoComplete: {
     autofocus: 'input.ant-input',
+    renderDefault: defaultCellRender,
     renderEdit: defaultCellRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   AInput: {
     autofocus: 'input.ant-input',
+    renderDefault: defaultCellRender,
     renderEdit: defaultCellRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   AInputNumber: {
     autofocus: 'input.ant-input-number-input',
+    renderDefault: defaultCellRender,
     renderEdit: defaultCellRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   ASelect: {
-    renderEdit (h, editRender, params) {
-      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = editRender
+    renderEdit (h, renderOpts, params) {
+      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { row, column } = params
-      let { attrs } = editRender
-      let props = getProps(params, editRender)
+      let { attrs } = renderOpts
+      let props = getProps(params, renderOpts)
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
         let groupLabel = optionGroupProps.label || 'label'
@@ -185,7 +188,7 @@ const renderMap = {
                 XEUtils.set(row, column.property, cellValue)
               }
             },
-            on: getCellEvents(editRender, params)
+            on: getCellEvents(renderOpts, params)
           }, XEUtils.map(optionGroups, (group, gIndex) => {
             return h('a-select-opt-group', {
               key: gIndex
@@ -209,12 +212,12 @@ const renderMap = {
               XEUtils.set(row, column.property, cellValue)
             }
           },
-          on: getCellEvents(editRender, params)
+          on: getCellEvents(renderOpts, params)
         }, renderOptions(h, options, optionProps))
       ]
     },
-    renderCell (h, editRender, params) {
-      let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = editRender
+    renderCell (h, renderOpts, params) {
+      let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { row, column } = params
       let labelProp = optionProps.label || 'label'
       let valueProp = optionProps.value || 'value'
@@ -237,11 +240,11 @@ const renderMap = {
       }
       return cellText(h, '')
     },
-    renderFilter (h, filterRender, params, context) {
-      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = filterRender
+    renderFilter (h, renderOpts, params, context) {
+      let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { column } = params
-      let { attrs } = filterRender
-      let props = getProps(params, filterRender)
+      let { attrs } = renderOpts
+      let props = getProps(params, renderOpts)
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
         let groupLabel = optionGroupProps.label || 'label'
@@ -259,7 +262,7 @@ const renderMap = {
               change (value) {
                 handleConfirmFilter(context, column, value && value.length > 0, item)
               }
-            }, filterRender, params)
+            }, renderOpts, params)
           }, XEUtils.map(optionGroups, (group, gIndex) => {
             return h('a-select-opt-group', {
               key: gIndex
@@ -287,14 +290,14 @@ const renderMap = {
             change (value) {
               handleConfirmFilter(context, column, value && value.length > 0, item)
             }
-          }, filterRender, params)
+          }, renderOpts, params)
         }, renderOptions(h, options, optionProps))
       })
     },
     filterMethod ({ option, row, column }) {
       let { data } = option
-      let { property, filterRender } = column
-      let { props = {} } = filterRender
+      let { property, renderOpts } = column
+      let { props = {} } = renderOpts
       let cellValue = XEUtils.get(row, property)
       if (props.mode === 'multiple') {
         if (XEUtils.isArray(cellValue)) {
@@ -355,11 +358,13 @@ const renderMap = {
     }
   },
   ARate: {
+    renderDefault: defaultCellRender,
     renderEdit: defaultCellRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   ASwitch: {
+    renderDefault: defaultCellRender,
     renderEdit: defaultCellRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
