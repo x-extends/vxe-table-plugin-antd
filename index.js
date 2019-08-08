@@ -55,10 +55,12 @@ function getCellEvents (editRender, params) {
 
 function defaultCellRender (h, editRender, params) {
   let { row, column } = params
+  let { attrs } = editRender
   let props = getProps(params, editRender)
   return [
     h(editRender.name, {
       props,
+      attrs,
       model: {
         value: XEUtils.get(row, column.property),
         callback (value) {
@@ -82,12 +84,15 @@ function getFilterEvents (on, filterRender, params) {
 
 function defaultFilterRender (h, filterRender, params, context) {
   let { column } = params
-  let { name } = filterRender
-  let type = 'input'
+  let { name, attrs } = filterRender
   let props = getProps(params, filterRender)
+  let type = 'change'
   switch (name) {
     case 'AAutoComplete':
       type = 'select'
+      break
+    case 'AInput':
+      type = 'input'
       break
     case 'AInputNumber':
       type = 'change'
@@ -96,6 +101,7 @@ function defaultFilterRender (h, filterRender, params, context) {
   return column.filters.map(item => {
     return h(name, {
       props,
+      attrs,
       model: {
         value: item.data,
         callback (optionValue) {
@@ -164,6 +170,7 @@ const renderMap = {
     renderEdit (h, editRender, params) {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = editRender
       let { row, column } = params
+      let { attrs } = editRender
       let props = getProps(params, editRender)
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
@@ -171,6 +178,7 @@ const renderMap = {
         return [
           h('a-select', {
             props,
+            attrs,
             model: {
               value: XEUtils.get(row, column.property),
               callback (cellValue) {
@@ -194,6 +202,7 @@ const renderMap = {
       return [
         h('a-select', {
           props,
+          attrs,
           model: {
             value: XEUtils.get(row, column.property),
             callback (cellValue) {
@@ -231,6 +240,7 @@ const renderMap = {
     renderFilter (h, filterRender, params, context) {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = filterRender
       let { column } = params
+      let { attrs } = filterRender
       let props = getProps(params, filterRender)
       if (optionGroups) {
         let groupOptions = optionGroupProps.options || 'options'
@@ -238,6 +248,7 @@ const renderMap = {
         return column.filters.map(item => {
           return h('a-select', {
             props,
+            attrs,
             model: {
               value: item.data,
               callback (optionValue) {
@@ -265,6 +276,7 @@ const renderMap = {
       return column.filters.map(item => {
         return h('a-select', {
           props,
+          attrs,
           model: {
             value: item.data,
             callback (optionValue) {
@@ -343,10 +355,14 @@ const renderMap = {
     }
   },
   ARate: {
-    renderEdit: defaultCellRender
+    renderEdit: defaultCellRender,
+    renderFilter: defaultFilterRender,
+    filterMethod: defaultFilterMethod
   },
   ASwitch: {
-    renderEdit: defaultCellRender
+    renderEdit: defaultCellRender,
+    renderFilter: defaultFilterRender,
+    filterMethod: defaultFilterMethod
   }
 }
 

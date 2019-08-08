@@ -6,7 +6,8 @@
   .vxe-table--filter-body {
     & > .ant-input,
     & > .ant-input-number,
-    & > .ant-select {
+    & > .ant-select,
+    & > .ant-rate {
       width: 180px;
     }
   }
@@ -18,6 +19,12 @@
     & > .ant-calendar-picker,
     & > .ant-time-picker {
       width: 100%;
+    }
+    & > .ant-rate {
+      vertical-align: bottom;
+      .anticon-star {
+        display: block;
+      }
     }
   }
   &.c--highlight,

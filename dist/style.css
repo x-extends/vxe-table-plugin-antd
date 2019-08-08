@@ -15,7 +15,8 @@
 
 .vxe-table-antd .vxe-table--filter-body > .ant-input,
 .vxe-table-antd .vxe-table--filter-body > .ant-input-number,
-.vxe-table-antd .vxe-table--filter-body > .ant-select {
+.vxe-table-antd .vxe-table--filter-body > .ant-select,
+.vxe-table-antd .vxe-table--filter-body > .ant-rate {
   width: 180px; }
 
 .vxe-table-antd .vxe-cell > .ant-input,
@@ -25,6 +26,11 @@
 .vxe-table-antd .vxe-cell > .ant-calendar-picker,
 .vxe-table-antd .vxe-cell > .ant-time-picker {
   width: 100%; }
+
+.vxe-table-antd .vxe-cell > .ant-rate {
+  vertical-align: bottom; }
+  .vxe-table-antd .vxe-cell > .ant-rate .anticon-star {
+    display: block; }
 
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input,
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input-number,

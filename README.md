@@ -6,12 +6,12 @@
 [![gzip size: CSS](http://img.badgesize.io/https://unpkg.com/vxe-table-plugin-antd/dist/style.min.css?compression=gzip&label=gzip%20size:%20CSS)](https://unpkg.com/vxe-table-plugin-antd/dist/style.min.css)
 [![npm license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/xuliangzhan/vxe-table-plugin-antd/blob/master/LICENSE)
 
-该插件用于在 vxe-table 表格中适配 ant-design-vue 组件的渲染
+该插件用于在 [vxe-table](https://github.com/xuliangzhan/vxe-table) 的渲染器中适配 [ant-design-vue](https://www.npmjs.com/package/ant-design-vue)
 
 ## Installing
 
 ```shell
-npm install xe-utils vxe-table vxe-table-plugin-antd
+npm install xe-utils vxe-table vxe-table-plugin-antd ant-design-vue
 ```
 
 ```javascript
@@ -42,7 +42,7 @@ VXETable.use(VXETablePluginAntd)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | AInput, AAutocomplete, AInputNumber, ASelect | — |
+| name | 支持的渲染组件 | String | AInput, AAutocomplete, AInputNumber, ASelect, ASwitch, ARate | — |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ASelect 有效，下拉组件选项列表 | Array | — | [] |
 | optionProps | 只对 name=ASelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
