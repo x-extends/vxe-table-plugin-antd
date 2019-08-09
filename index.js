@@ -378,15 +378,16 @@ const renderMap = {
  */
 function handleClearEvent (params, evnt, context) {
   let { getEventTargetNode } = context
+  let bodyElem = document.body
   if (
     // 下拉框
-    getEventTargetNode(evnt, document.body, 'ant-select-dropdown').flag ||
+    getEventTargetNode(evnt, bodyElem, 'ant-select-dropdown').flag ||
     // 级联
-    getEventTargetNode(evnt, document.body, 'ant-cascader-menus').flag ||
+    getEventTargetNode(evnt, bodyElem, 'ant-cascader-menus').flag ||
     // 日期
-    getEventTargetNode(evnt, document.body, 'ant-calendar-picker-container').flag ||
+    getEventTargetNode(evnt, bodyElem, 'ant-calendar-picker-container').flag ||
     // 时间选择
-    getEventTargetNode(evnt, document.body, 'ant-time-picker-panel').flag
+    getEventTargetNode(evnt, bodyElem, 'ant-time-picker-panel').flag
   ) {
     return false
   }
