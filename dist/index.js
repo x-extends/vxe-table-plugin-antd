@@ -379,7 +379,7 @@
             column = _ref5.column;
         var data = option.data;
         var property = column.property,
-            renderOpts = column.renderOpts;
+            renderOpts = column.filterRender;
         var _renderOpts$props2 = renderOpts.props,
             props = _renderOpts$props2 === void 0 ? {} : _renderOpts$props2;
 
