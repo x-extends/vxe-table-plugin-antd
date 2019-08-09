@@ -177,6 +177,8 @@
     var data = option.data;
 
     var cellValue = _xeUtils["default"].get(row, column.property);
+    /* eslint-disable eqeqeq */
+
 
     return cellValue === data;
   }
@@ -390,8 +392,10 @@
 
           return data.indexOf(cellValue) > -1;
         }
+        /* eslint-disable eqeqeq */
 
-        return cellValue === data;
+
+        return cellValue == data;
       }
     },
     ACascader: {
