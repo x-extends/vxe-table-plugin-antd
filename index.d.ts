@@ -1,5 +1,7 @@
+import VXETable from 'vxe-table'
+
 export interface VXETablePluginAntdStatic {
-  install(vue: typeof Vue): void;
+  install(xTable: typeof VXETable): void;
 }
 
 /**

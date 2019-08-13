@@ -393,7 +393,7 @@ function handleClearEvent (params, evnt, context) {
   }
 }
 
-const VXETablePluginAntd = {
+export const VXETablePluginAntd = {
   install ({ interceptor, renderer }) {
     // 添加到渲染器
     renderer.mixin(renderMap)

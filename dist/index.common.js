@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports["default"] = exports.VXETablePluginAntd = void 0;
 
 var _xeUtils = _interopRequireDefault(require("xe-utils"));
 
@@ -496,6 +496,7 @@ var VXETablePluginAntd = {
     interceptor.add('event.clear_actived', handleClearEvent);
   }
 };
+exports.VXETablePluginAntd = VXETablePluginAntd;
 
 if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd);
