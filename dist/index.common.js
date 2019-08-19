@@ -502,5 +502,11 @@ if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd);
 }
 
+_xeUtils["default"].mixin({
+  toMomentString: function toMomentString(cellValue, format) {
+    return cellValue ? cellValue.format(format) : '';
+  }
+});
+
 var _default = VXETablePluginAntd;
 exports["default"] = _default;

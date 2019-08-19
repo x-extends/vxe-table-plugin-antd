@@ -407,4 +407,10 @@ if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd)
 }
 
+XEUtils.mixin({
+  toMomentString (cellValue, format) {
+    return cellValue ? cellValue.format(format) : ''
+  }
+})
+
 export default VXETablePluginAntd

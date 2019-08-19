@@ -514,6 +514,12 @@
     window.VXETable.use(VXETablePluginAntd);
   }
 
+  _xeUtils["default"].mixin({
+    toMomentString: function toMomentString(cellValue, format) {
+      return cellValue ? cellValue.format(format) : '';
+    }
+  });
+
   var _default = VXETablePluginAntd;
   _exports["default"] = _default;
 });
