@@ -1,12 +1,12 @@
 import VXETable from 'vxe-table'
 
-export interface VXETablePluginAntdStatic {
+export interface VXETablePluginStatic {
   install(xTable: typeof VXETable): void;
 }
 
 /**
  * vxe-table renderer plugins for ant-design-vue.
  */
-declare var VXETablePluginAntd: VXETablePluginAntdStatic;
+declare var VXETablePluginAntd: VXETablePluginStatic;
 
 export default VXETablePluginAntd;
