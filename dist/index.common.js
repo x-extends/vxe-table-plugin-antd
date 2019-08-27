@@ -489,9 +489,7 @@ var VXETablePluginAntd = {
   install: function install(_ref9) {
     var interceptor = _ref9.interceptor,
         renderer = _ref9.renderer;
-    // 添加到渲染器
-    renderer.mixin(renderMap); // 处理事件冲突
-
+    renderer.mixin(renderMap);
     interceptor.add('event.clear_filter', handleClearEvent);
     interceptor.add('event.clear_actived', handleClearEvent);
   }

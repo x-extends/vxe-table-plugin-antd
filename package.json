@@ -1,7 +1,7 @@
 {
   "name": "vxe-table-plugin-antd",
   "version": "1.4.2",
-  "description": "vxe-table renderer plugins for ant-design-vue.",
+  "description": "vxe-table renderer plugin for ant-design-vue.",
   "scripts": {
     "lib": "gulp build"
   },
@@ -38,9 +38,10 @@
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.2",
     "markdown-doctest": "^0.9.1",
-    "xe-utils": "^2.0.10"
+    "xe-utils": "^2.2.1"
   },
   "peerDependencies": {
+    "ant-design-vue": ">=1.0.0",
     "vxe-table": ">=1.4.0",
     "xe-utils": ">=2.2.0"
   },
