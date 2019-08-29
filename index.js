@@ -1,4 +1,4 @@
-import XEUtils from 'xe-utils'
+import XEUtils from 'xe-utils/methods/xe-utils'
 
 function matchCascaderData (index, list, values, labels) {
   let val = values[index]
