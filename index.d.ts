@@ -5,7 +5,7 @@ export interface VXETablePluginStatic {
 }
 
 /**
- * vxe-table renderer plugins for ant-design-vue.
+ * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 declare var VXETablePluginAntd: VXETablePluginStatic;
 
