@@ -53,7 +53,7 @@ function getCellEvents (renderOpts, params) {
   return on
 }
 
-function defaultCellRender (h, renderOpts, params) {
+function defaultEditRender (h, renderOpts, params) {
   let { row, column } = params
   let { attrs } = renderOpts
   let props = getProps(params, renderOpts)
@@ -151,22 +151,22 @@ function cellText (h, cellValue) {
 const renderMap = {
   AAutoComplete: {
     autofocus: 'input.ant-input',
-    renderDefault: defaultCellRender,
-    renderEdit: defaultCellRender,
+    renderDefault: defaultEditRender,
+    renderEdit: defaultEditRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   AInput: {
     autofocus: 'input.ant-input',
-    renderDefault: defaultCellRender,
-    renderEdit: defaultCellRender,
+    renderDefault: defaultEditRender,
+    renderEdit: defaultEditRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   AInputNumber: {
     autofocus: 'input.ant-input-number-input',
-    renderDefault: defaultCellRender,
-    renderEdit: defaultCellRender,
+    renderDefault: defaultEditRender,
+    renderEdit: defaultEditRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
@@ -311,7 +311,7 @@ const renderMap = {
     }
   },
   ACascader: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -322,15 +322,15 @@ const renderMap = {
     }
   },
   ADatePicker: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell: formatDatePicker('YYYY-MM-DD')
   },
   AMonthPicker: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell: formatDatePicker('YYYY-MM')
   },
   ARangePicker: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -341,15 +341,15 @@ const renderMap = {
     }
   },
   AWeekPicker: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell: formatDatePicker('YYYY-WW周')
   },
   ATimePicker: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell: formatDatePicker('HH:mm:ss')
   },
   ATreeSelect: {
-    renderEdit: defaultCellRender,
+    renderEdit: defaultEditRender,
     renderCell (h, { props = {} }, params) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -360,14 +360,14 @@ const renderMap = {
     }
   },
   ARate: {
-    renderDefault: defaultCellRender,
-    renderEdit: defaultCellRender,
+    renderDefault: defaultEditRender,
+    renderEdit: defaultEditRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   },
   ASwitch: {
-    renderDefault: defaultCellRender,
-    renderEdit: defaultCellRender,
+    renderDefault: defaultEditRender,
+    renderEdit: defaultEditRender,
     renderFilter: defaultFilterRender,
     filterMethod: defaultFilterMethod
   }

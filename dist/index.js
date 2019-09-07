@@ -96,7 +96,7 @@
     return on;
   }
 
-  function defaultCellRender(h, renderOpts, params) {
+  function defaultEditRender(h, renderOpts, params) {
     var row = params.row,
         column = params.column;
     var attrs = renderOpts.attrs;
@@ -207,22 +207,22 @@
   var renderMap = {
     AAutoComplete: {
       autofocus: 'input.ant-input',
-      renderDefault: defaultCellRender,
-      renderEdit: defaultCellRender,
+      renderDefault: defaultEditRender,
+      renderEdit: defaultEditRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     AInput: {
       autofocus: 'input.ant-input',
-      renderDefault: defaultCellRender,
-      renderEdit: defaultCellRender,
+      renderDefault: defaultEditRender,
+      renderEdit: defaultEditRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     AInputNumber: {
       autofocus: 'input.ant-input-number-input',
-      renderDefault: defaultCellRender,
-      renderEdit: defaultCellRender,
+      renderDefault: defaultEditRender,
+      renderEdit: defaultEditRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
@@ -399,7 +399,7 @@
       }
     },
     ACascader: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: function renderCell(h, _ref6, params) {
         var _ref6$props = _ref6.props,
             props = _ref6$props === void 0 ? {} : _ref6$props;
@@ -415,15 +415,15 @@
       }
     },
     ADatePicker: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: formatDatePicker('YYYY-MM-DD')
     },
     AMonthPicker: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: formatDatePicker('YYYY-MM')
     },
     ARangePicker: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: function renderCell(h, _ref7, params) {
         var _ref7$props = _ref7.props,
             props = _ref7$props === void 0 ? {} : _ref7$props;
@@ -442,15 +442,15 @@
       }
     },
     AWeekPicker: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: formatDatePicker('YYYY-WW周')
     },
     ATimePicker: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: formatDatePicker('HH:mm:ss')
     },
     ATreeSelect: {
-      renderEdit: defaultCellRender,
+      renderEdit: defaultEditRender,
       renderCell: function renderCell(h, _ref8, params) {
         var _ref8$props = _ref8.props,
             props = _ref8$props === void 0 ? {} : _ref8$props;
@@ -467,14 +467,14 @@
       }
     },
     ARate: {
-      renderDefault: defaultCellRender,
-      renderEdit: defaultCellRender,
+      renderDefault: defaultEditRender,
+      renderEdit: defaultEditRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     },
     ASwitch: {
-      renderDefault: defaultCellRender,
-      renderEdit: defaultCellRender,
+      renderDefault: defaultEditRender,
+      renderEdit: defaultEditRender,
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     }
