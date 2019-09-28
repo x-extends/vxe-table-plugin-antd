@@ -1,33 +1,27 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define("vxe-table-plugin-antd", ["exports", "xe-utils"], factory);
+    define("vxe-table-plugin-antd", [], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require("xe-utils"));
+    factory();
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.XEUtils);
+    factory();
     global.VXETablePluginAntd = mod.exports.default;
   }
-})(this, function (_exports, _xeUtils) {
+})(this, function () {
   "use strict";
 
-  Object.defineProperty(_exports, "__esModule", {
-    value: true
-  });
-  _exports["default"] = _exports.VXETablePluginAntd = void 0;
-  _xeUtils = _interopRequireDefault(_xeUtils);
+  exports.__esModule = true;
 
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  var xe_utils_1 = require("xe-utils");
 
   function matchCascaderData(index, list, values, labels) {
     var val = values[index];
 
     if (list && values.length > index) {
-      _xeUtils["default"].each(list, function (item) {
+      xe_utils_1["default"].each(list, function (item) {
         if (item.value === val) {
           labels.push(item.label);
           matchCascaderData(++index, item.children, values, labels);
@@ -37,13 +31,12 @@
   }
 
   function formatDatePicker(defaultFormat) {
-    return function (h, _ref, params) {
-      var _ref$props = _ref.props,
-          props = _ref$props === void 0 ? {} : _ref$props;
+    return function (h, _a, params) {
+      var _b = _a.props,
+          props = _b === void 0 ? {} : _b;
       var row = params.row,
           column = params.column;
-
-      var cellValue = _xeUtils["default"].get(row, column.property);
+      var cellValue = xe_utils_1["default"].get(row, column.property);
 
       if (cellValue) {
         cellValue = cellValue.format(props.format || defaultFormat);
@@ -53,15 +46,17 @@
     };
   }
 
-  function getProps(_ref2, _ref3) {
-    var $table = _ref2.$table;
-    var props = _ref3.props;
-    return _xeUtils["default"].assign($table.vSize ? {
+  function getProps(_a, _b) {
+    var $table = _a.$table;
+    var props = _b.props;
+    return xe_utils_1["default"].assign($table.vSize ? {
       size: $table.vSize
     } : {}, props);
   }
 
   function getCellEvents(renderOpts, params) {
+    var _a;
+
     var name = renderOpts.name,
         events = renderOpts.events;
     var $table = params.$table;
@@ -81,12 +76,12 @@
         break;
     }
 
-    var on = _defineProperty({}, type, function () {
+    var on = (_a = {}, _a[type] = function () {
       return $table.updateStatus(params);
-    });
+    }, _a);
 
     if (events) {
-      _xeUtils["default"].assign(on, _xeUtils["default"].objectMap(events, function (cb) {
+      xe_utils_1["default"].assign(on, xe_utils_1["default"].objectMap(events, function (cb) {
         return function () {
           cb.apply(null, [params].concat.apply(params, arguments));
         };
@@ -105,9 +100,9 @@
       props: props,
       attrs: attrs,
       model: {
-        value: _xeUtils["default"].get(row, column.property),
+        value: xe_utils_1["default"].get(row, column.property),
         callback: function callback(value) {
-          _xeUtils["default"].set(row, column.property, value);
+          xe_utils_1["default"].set(row, column.property, value);
         }
       },
       on: getCellEvents(renderOpts, params)
@@ -118,7 +113,7 @@
     var events = renderOpts.events;
 
     if (events) {
-      _xeUtils["default"].assign(on, _xeUtils["default"].objectMap(events, function (cb) {
+      xe_utils_1["default"].assign(on, xe_utils_1["default"].objectMap(events, function (cb) {
         return function () {
           cb.apply(null, [params].concat.apply(params, arguments));
         };
@@ -150,6 +145,8 @@
     }
 
     return column.filters.map(function (item) {
+      var _a;
+
       return h(name, {
         props: props,
         attrs: attrs,
@@ -159,9 +156,9 @@
             item.data = optionValue;
           }
         },
-        on: getFilterEvents(_defineProperty({}, type, function () {
+        on: getFilterEvents((_a = {}, _a[type] = function () {
           handleConfirmFilter(context, column, !!item.data, item);
-        }), renderOpts, params)
+        }, _a), renderOpts, params)
       });
     });
   }
@@ -170,15 +167,13 @@
     context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, checked, item);
   }
 
-  function defaultFilterMethod(_ref4) {
-    var option = _ref4.option,
-        row = _ref4.row,
-        column = _ref4.column;
+  function defaultFilterMethod(_a) {
+    var option = _a.option,
+        row = _a.row,
+        column = _a.column;
     var data = option.data;
-
-    var cellValue = _xeUtils["default"].get(row, column.property);
+    var cellValue = xe_utils_1["default"].get(row, column.property);
     /* eslint-disable eqeqeq */
-
 
     return cellValue === data;
   }
@@ -186,7 +181,7 @@
   function renderOptions(h, options, optionProps) {
     var labelProp = optionProps.label || 'label';
     var valueProp = optionProps.value || 'value';
-    return _xeUtils["default"].map(options, function (item, index) {
+    return xe_utils_1["default"].map(options, function (item, index) {
       return h('a-select-option', {
         props: {
           value: item[valueProp]
@@ -230,34 +225,34 @@
       renderEdit: function renderEdit(h, renderOpts, params) {
         var options = renderOpts.options,
             optionGroups = renderOpts.optionGroups,
-            _renderOpts$optionPro = renderOpts.optionProps,
-            optionProps = _renderOpts$optionPro === void 0 ? {} : _renderOpts$optionPro,
-            _renderOpts$optionGro = renderOpts.optionGroupProps,
-            optionGroupProps = _renderOpts$optionGro === void 0 ? {} : _renderOpts$optionGro;
+            _a = renderOpts.optionProps,
+            optionProps = _a === void 0 ? {} : _a,
+            _b = renderOpts.optionGroupProps,
+            optionGroupProps = _b === void 0 ? {} : _b;
         var row = params.row,
             column = params.column;
         var attrs = renderOpts.attrs;
         var props = getProps(params, renderOpts);
 
         if (optionGroups) {
-          var groupOptions = optionGroupProps.options || 'options';
-          var groupLabel = optionGroupProps.label || 'label';
+          var groupOptions_1 = optionGroupProps.options || 'options';
+          var groupLabel_1 = optionGroupProps.label || 'label';
           return [h('a-select', {
             props: props,
             attrs: attrs,
             model: {
-              value: _xeUtils["default"].get(row, column.property),
+              value: xe_utils_1["default"].get(row, column.property),
               callback: function callback(cellValue) {
-                _xeUtils["default"].set(row, column.property, cellValue);
+                xe_utils_1["default"].set(row, column.property, cellValue);
               }
             },
             on: getCellEvents(renderOpts, params)
-          }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
+          }, xe_utils_1["default"].map(optionGroups, function (group, gIndex) {
             return h('a-select-opt-group', {
               key: gIndex
             }, [h('span', {
               slot: 'label'
-            }, group[groupLabel])].concat(renderOptions(h, group[groupOptions], optionProps)));
+            }, group[groupLabel_1])].concat(renderOptions(h, group[groupOptions_1], optionProps)));
           }))];
         }
 
@@ -265,9 +260,9 @@
           props: props,
           attrs: attrs,
           model: {
-            value: _xeUtils["default"].get(row, column.property),
+            value: xe_utils_1["default"].get(row, column.property),
             callback: function callback(cellValue) {
-              _xeUtils["default"].set(row, column.property, cellValue);
+              xe_utils_1["default"].set(row, column.property, cellValue);
             }
           },
           on: getCellEvents(renderOpts, params)
@@ -276,26 +271,25 @@
       renderCell: function renderCell(h, renderOpts, params) {
         var options = renderOpts.options,
             optionGroups = renderOpts.optionGroups,
-            _renderOpts$props = renderOpts.props,
-            props = _renderOpts$props === void 0 ? {} : _renderOpts$props,
-            _renderOpts$optionPro2 = renderOpts.optionProps,
-            optionProps = _renderOpts$optionPro2 === void 0 ? {} : _renderOpts$optionPro2,
-            _renderOpts$optionGro2 = renderOpts.optionGroupProps,
-            optionGroupProps = _renderOpts$optionGro2 === void 0 ? {} : _renderOpts$optionGro2;
+            _a = renderOpts.props,
+            props = _a === void 0 ? {} : _a,
+            _b = renderOpts.optionProps,
+            optionProps = _b === void 0 ? {} : _b,
+            _c = renderOpts.optionGroupProps,
+            optionGroupProps = _c === void 0 ? {} : _c;
         var row = params.row,
             column = params.column;
         var labelProp = optionProps.label || 'label';
         var valueProp = optionProps.value || 'value';
         var groupOptions = optionGroupProps.options || 'options';
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
+        var cellValue = xe_utils_1["default"].get(row, column.property);
 
         if (!(cellValue === null || cellValue === undefined || cellValue === '')) {
-          return cellText(h, _xeUtils["default"].map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? function (value) {
+          return cellText(h, xe_utils_1["default"].map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? function (value) {
             var selectItem;
 
             for (var index = 0; index < optionGroups.length; index++) {
-              selectItem = _xeUtils["default"].find(optionGroups[index][groupOptions], function (item) {
+              selectItem = xe_utils_1["default"].find(optionGroups[index][groupOptions], function (item) {
                 return item[valueProp] === value;
               });
 
@@ -306,10 +300,9 @@
 
             return selectItem ? selectItem[labelProp] : null;
           } : function (value) {
-            var selectItem = _xeUtils["default"].find(options, function (item) {
+            var selectItem = xe_utils_1["default"].find(options, function (item) {
               return item[valueProp] === value;
             });
-
             return selectItem ? selectItem[labelProp] : null;
           }).join(';'));
         }
@@ -319,17 +312,17 @@
       renderFilter: function renderFilter(h, renderOpts, params, context) {
         var options = renderOpts.options,
             optionGroups = renderOpts.optionGroups,
-            _renderOpts$optionPro3 = renderOpts.optionProps,
-            optionProps = _renderOpts$optionPro3 === void 0 ? {} : _renderOpts$optionPro3,
-            _renderOpts$optionGro3 = renderOpts.optionGroupProps,
-            optionGroupProps = _renderOpts$optionGro3 === void 0 ? {} : _renderOpts$optionGro3;
+            _a = renderOpts.optionProps,
+            optionProps = _a === void 0 ? {} : _a,
+            _b = renderOpts.optionGroupProps,
+            optionGroupProps = _b === void 0 ? {} : _b;
         var column = params.column;
         var attrs = renderOpts.attrs;
         var props = getProps(params, renderOpts);
 
         if (optionGroups) {
-          var groupOptions = optionGroupProps.options || 'options';
-          var groupLabel = optionGroupProps.label || 'label';
+          var groupOptions_2 = optionGroupProps.options || 'options';
+          var groupLabel_2 = optionGroupProps.label || 'label';
           return column.filters.map(function (item) {
             return h('a-select', {
               props: props,
@@ -345,12 +338,12 @@
                   handleConfirmFilter(context, column, value && value.length > 0, item);
                 }
               }, renderOpts, params)
-            }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
+            }, xe_utils_1["default"].map(optionGroups, function (group, gIndex) {
               return h('a-select-opt-group', {
                 key: gIndex
               }, [h('span', {
                 slot: 'label'
-              }, group[groupLabel])].concat(renderOptions(h, group[groupOptions], optionProps)));
+              }, group[groupLabel_2])].concat(renderOptions(h, group[groupOptions_2], optionProps)));
             }));
           });
         }
@@ -373,21 +366,20 @@
           }, renderOptions(h, options, optionProps));
         });
       },
-      filterMethod: function filterMethod(_ref5) {
-        var option = _ref5.option,
-            row = _ref5.row,
-            column = _ref5.column;
+      filterMethod: function filterMethod(_a) {
+        var option = _a.option,
+            row = _a.row,
+            column = _a.column;
         var data = option.data;
         var property = column.property,
             renderOpts = column.filterRender;
-        var _renderOpts$props2 = renderOpts.props,
-            props = _renderOpts$props2 === void 0 ? {} : _renderOpts$props2;
-
-        var cellValue = _xeUtils["default"].get(row, property);
+        var _b = renderOpts.props,
+            props = _b === void 0 ? {} : _b;
+        var cellValue = xe_utils_1["default"].get(row, property);
 
         if (props.mode === 'multiple') {
-          if (_xeUtils["default"].isArray(cellValue)) {
-            return _xeUtils["default"].includeArrays(cellValue, data);
+          if (xe_utils_1["default"].isArray(cellValue)) {
+            return xe_utils_1["default"].includeArrays(cellValue, data);
           }
 
           return data.indexOf(cellValue) > -1;
@@ -400,18 +392,16 @@
     },
     ACascader: {
       renderEdit: defaultEditRender,
-      renderCell: function renderCell(h, _ref6, params) {
-        var _ref6$props = _ref6.props,
-            props = _ref6$props === void 0 ? {} : _ref6$props;
+      renderCell: function renderCell(h, _a, params) {
+        var _b = _a.props,
+            props = _b === void 0 ? {} : _b;
         var row = params.row,
             column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
-
+        var cellValue = xe_utils_1["default"].get(row, column.property);
         var values = cellValue || [];
         var labels = [];
         matchCascaderData(0, props.options, values, labels);
-        return cellText(h, (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(" ".concat(props.separator || '/', " ")));
+        return cellText(h, (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(" " + (props.separator || '/') + " "));
       }
     },
     ADatePicker: {
@@ -424,16 +414,15 @@
     },
     ARangePicker: {
       renderEdit: defaultEditRender,
-      renderCell: function renderCell(h, _ref7, params) {
-        var _ref7$props = _ref7.props,
-            props = _ref7$props === void 0 ? {} : _ref7$props;
+      renderCell: function renderCell(h, _a, params) {
+        var _b = _a.props,
+            props = _b === void 0 ? {} : _b;
         var row = params.row,
             column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
+        var cellValue = xe_utils_1["default"].get(row, column.property);
 
         if (cellValue) {
-          cellValue = _xeUtils["default"].map(cellValue, function (date) {
+          cellValue = xe_utils_1["default"].map(cellValue, function (date) {
             return date.format(props.format || 'YYYY-MM-DD');
           }).join(' ~ ');
         }
@@ -451,13 +440,12 @@
     },
     ATreeSelect: {
       renderEdit: defaultEditRender,
-      renderCell: function renderCell(h, _ref8, params) {
-        var _ref8$props = _ref8.props,
-            props = _ref8$props === void 0 ? {} : _ref8$props;
+      renderCell: function renderCell(h, _a, params) {
+        var _b = _a.props,
+            props = _b === void 0 ? {} : _b;
         var row = params.row,
             column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
+        var cellValue = xe_utils_1["default"].get(row, column.property);
 
         if (cellValue && (props.treeCheckable || props.multiple)) {
           cellValue = cellValue.join(';');
@@ -478,11 +466,10 @@
       renderFilter: defaultFilterRender,
       filterMethod: defaultFilterMethod
     }
-    /**
-     * 事件兼容性处理
-     */
-
   };
+  /**
+   * 事件兼容性处理
+   */
 
   function handleClearEvent(params, evnt, context) {
     var getEventTargetNode = context.getEventTargetNode;
@@ -496,28 +483,29 @@
       return false;
     }
   }
+  /**
+   * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
+   */
 
-  var VXETablePluginAntd = {
-    install: function install(VXETable) {
-      var interceptor = VXETable.interceptor,
-          renderer = VXETable.renderer;
+
+  exports.VXETablePluginAntd = {
+    install: function install(xtable) {
+      var interceptor = xtable.interceptor,
+          renderer = xtable.renderer;
       renderer.mixin(renderMap);
       interceptor.add('event.clear_filter', handleClearEvent);
       interceptor.add('event.clear_actived', handleClearEvent);
     }
   };
-  _exports.VXETablePluginAntd = VXETablePluginAntd;
 
   if (typeof window !== 'undefined' && window.VXETable) {
-    window.VXETable.use(VXETablePluginAntd);
+    window.VXETable.use(exports.VXETablePluginAntd);
   }
 
-  _xeUtils["default"].mixin({
+  xe_utils_1["default"].mixin({
     toMomentString: function toMomentString(cellValue, format) {
       return cellValue ? cellValue.format(format) : '';
     }
   });
-
-  var _default = VXETablePluginAntd;
-  _exports["default"] = _default;
+  exports["default"] = exports.VXETablePluginAntd;
 });
