@@ -1,5 +1,5 @@
 import XEUtils from 'xe-utils/methods/xe-utils'
-import { VXETable } from 'vxe-table'
+// import { VXETable } from 'vxe-table'
 
 function matchCascaderData (index: number, list: Array<any>, values: Array<any>, labels: Array<any>) {
   let val = values[index]
@@ -398,11 +398,17 @@ function handleClearEvent (params: any, evnt: any, context: any) {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install (xtable: typeof VXETable) {
+  install (xtable: any) {
     let { interceptor, renderer } = xtable
     renderer.mixin(renderMap)
     interceptor.add('event.clear_filter', handleClearEvent)
     interceptor.add('event.clear_actived', handleClearEvent)
+  }
+}
+
+declare global {
+  interface Window {
+    VXETable: any
   }
 }
 
