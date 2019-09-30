@@ -406,12 +406,6 @@ export const VXETablePluginAntd = {
   }
 }
 
-declare global {
-  interface Window {
-    VXETable: any
-  }
-}
-
 if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd)
 }
