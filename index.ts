@@ -410,7 +410,7 @@ if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd)
 }
 
-function toMomentString (cellValue: any, format: string) {
+function toMomentString (cellValue: any, format: string): string {
   return cellValue ? cellValue.format(format) : ''
 }
 
