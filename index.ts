@@ -410,10 +410,23 @@ if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd)
 }
 
-XEUtils.mixin({
-  toMomentString (cellValue: any, format: any) {
-    return cellValue ? cellValue.format(format) : ''
+function toMomentString (cellValue: any, format: string) {
+  return cellValue ? cellValue.format(format) : ''
+}
+
+declare module 'xe-utils/methods/xe-utils' {
+  interface XEUtilsMethods {
+    /**
+     * 将 Moment 日期格式化为字符串
+     * @param cellValue 值
+     * @param format 格式化
+     */
+    toMomentString: typeof toMomentString;
   }
+}
+
+XEUtils.mixin({
+  toMomentString
 })
 
 export default VXETablePluginAntd
