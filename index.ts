@@ -1,5 +1,5 @@
 import XEUtils from 'xe-utils/methods/xe-utils'
-// import { VXETable } from 'vxe-table'
+import VXETable from 'vxe-table/lib/vxe-table'
 
 function matchCascaderData (index: number, list: Array<any>, values: Array<any>, labels: Array<any>) {
   let val = values[index]
@@ -47,8 +47,8 @@ function getCellEvents (renderOpts: any, params: any) {
     [type]: () => $table.updateStatus(params)
   }
   if (events) {
-    XEUtils.assign(on, XEUtils.objectMap(events, (cb: Function) => function () {
-      cb.apply(null, [params].concat.apply(params, arguments))
+    XEUtils.assign(on, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
+      cb.apply(null, [params].concat.apply(params, args))
     }))
   }
   return on
@@ -76,8 +76,8 @@ function defaultEditRender (h: Function, renderOpts: any, params: any) {
 function getFilterEvents (on: any, renderOpts: any, params: any) {
   let { events } = renderOpts
   if (events) {
-    XEUtils.assign(on, XEUtils.objectMap(events, (cb: Function) => function () {
-      cb.apply(null, [params].concat.apply(params, arguments))
+    XEUtils.assign(on, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
+      cb.apply(null, [params].concat.apply(params, args))
     }))
   }
   return on
@@ -398,7 +398,7 @@ function handleClearEvent (params: any, evnt: any, context: any) {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install (xtable: any) {
+  install (xtable: typeof VXETable) {
     let { interceptor, renderer } = xtable
     renderer.mixin(renderMap)
     interceptor.add('event.clear_filter', handleClearEvent)
