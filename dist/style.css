@@ -32,6 +32,15 @@
   .vxe-table-antd .vxe-cell > .ant-rate .anticon-star {
     display: block; }
 
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-input,
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-select .ant-input,
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-select .ant-select-selection,
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-input-number,
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-cascader-picker .ant-cascader-input,
+.vxe-table-antd .col--valid-error > .vxe-cell > .ant-calendar-picker .ant-calendar-picker-input {
+  border-color: #f56c6c;
+  box-shadow: none; }
+
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input,
 .vxe-table-antd.c--highlight .vxe-cell > .ant-input-number,
 .vxe-table-antd .vxe-table.c--highlight .vxe-cell > .ant-input,

@@ -1,7 +1,10 @@
+$vxe-table-validate-error-color: #f56c6c;
+
 %ResetBorder {
   border: 0;
   box-shadow: none;
 }
+
 .vxe-table-antd {
   .vxe-table--filter-body {
     & > .ant-input,
@@ -24,6 +27,19 @@
       vertical-align: bottom;
       .anticon-star {
         display: block;
+      }
+    }
+  }
+  .col--valid-error {
+    & > .vxe-cell {
+      & > .ant-input,
+      & > .ant-select .ant-input,
+      & > .ant-select .ant-select-selection,
+      & > .ant-input-number,
+      & > .ant-cascader-picker .ant-cascader-input,
+      & > .ant-calendar-picker .ant-calendar-picker-input {
+        border-color: $vxe-table-validate-error-color;
+        box-shadow: none;
       }
     }
   }
