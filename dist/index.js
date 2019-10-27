@@ -203,10 +203,12 @@
   function renderOptions(h, options, optionProps) {
     var labelProp = optionProps.label || 'label';
     var valueProp = optionProps.value || 'value';
+    var disabledProp = optionProps.disabled || 'disabled';
     return _xeUtils["default"].map(options, function (item, index) {
       return h('a-select-option', {
         props: {
-          value: item[valueProp]
+          value: item[valueProp],
+          disabled: item[disabledProp]
         },
         key: index
       }, item[labelProp]);
