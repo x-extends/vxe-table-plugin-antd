@@ -144,10 +144,12 @@ function defaultFilterMethod ({ option, row, column }: any) {
 function renderOptions (h: Function, options: any, optionProps: any) {
   let labelProp = optionProps.label || 'label'
   let valueProp = optionProps.value || 'value'
+  let disabledProp = optionProps.disabled || 'disabled'
   return XEUtils.map(options, (item: any, index: number) => {
     return h('a-select-option', {
       props: {
-        value: item[valueProp]
+        value: item[valueProp],
+        disabled: item[disabledProp]
       },
       key: index
     }, item[labelProp])
