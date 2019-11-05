@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils/methods/xe-utils'
 import VXETable from 'vxe-table/lib/vxe-table'
 
-function matchCascaderData (index: number, list: Array<any>, values: Array<any>, labels: Array<any>) {
+function matchCascaderData(index: number, list: Array<any>, values: Array<any>, labels: Array<any>) {
   let val = values[index]
   if (list && values.length > index) {
     XEUtils.each(list, (item: any) => {
@@ -13,7 +13,7 @@ function matchCascaderData (index: number, list: Array<any>, values: Array<any>,
   }
 }
 
-function formatDatePicker (defaultFormat: any) {
+function formatDatePicker(defaultFormat: any) {
   return function (h: Function, { props = {} }: any, params: any) {
     let { row, column } = params
     let cellValue = XEUtils.get(row, column.property)
@@ -24,11 +24,11 @@ function formatDatePicker (defaultFormat: any) {
   }
 }
 
-function getProps ({ $table }: any, { props }: any) {
+function getProps({ $table }: any, { props }: any) {
   return XEUtils.assign($table.vSize ? { size: $table.vSize } : {}, props)
 }
 
-function getCellEvents (renderOpts: any, params: any) {
+function getCellEvents(renderOpts: any, params: any) {
   let { name, events } = renderOpts
   let { $table } = params
   let type = 'change'
@@ -52,18 +52,14 @@ function getCellEvents (renderOpts: any, params: any) {
     }
   }
   if (events) {
-    XEUtils.assign(
-      {}, 
-      XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
-        cb.apply(null, [params].concat.apply(params, args))
-      }),
-      on
-    )
+    return XEUtils.assign({}, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
+      cb.apply(null, [params].concat.apply(params, args))
+    }), on)
   }
   return on
 }
 
-function defaultEditRender (h: Function, renderOpts: any, params: any) {
+function defaultEditRender(h: Function, renderOpts: any, params: any) {
   let { row, column } = params
   let { attrs } = renderOpts
   let props = getProps(params, renderOpts)
@@ -73,7 +69,7 @@ function defaultEditRender (h: Function, renderOpts: any, params: any) {
       attrs,
       model: {
         value: XEUtils.get(row, column.property),
-        callback (value: any) {
+        callback(value: any) {
           XEUtils.set(row, column.property, value)
         }
       },
@@ -82,17 +78,17 @@ function defaultEditRender (h: Function, renderOpts: any, params: any) {
   ]
 }
 
-function getFilterEvents (on: any, renderOpts: any, params: any) {
+function getFilterEvents(on: any, renderOpts: any, params: any) {
   let { events } = renderOpts
   if (events) {
-    XEUtils.assign({}, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
+    return XEUtils.assign({}, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
       cb.apply(null, [params].concat.apply(params, args))
     }), on)
   }
   return on
 }
 
-function defaultFilterRender (h: Function, renderOpts: any, params: any, context: any) {
+function defaultFilterRender(h: Function, renderOpts: any, params: any, context: any) {
   let { column } = params
   let { name, attrs, events } = renderOpts
   let props = getProps(params, renderOpts)
@@ -114,12 +110,12 @@ function defaultFilterRender (h: Function, renderOpts: any, params: any, context
       attrs,
       model: {
         value: item.data,
-        callback (optionValue: any) {
+        callback(optionValue: any) {
           item.data = optionValue
         }
       },
       on: getFilterEvents({
-        [type] (evnt: any) {
+        [type](evnt: any) {
           handleConfirmFilter(context, column, !!item.data, item)
           if (events && events[type]) {
             events[type](params, evnt)
@@ -130,18 +126,18 @@ function defaultFilterRender (h: Function, renderOpts: any, params: any, context
   })
 }
 
-function handleConfirmFilter (context: any, column: any, checked: any, item: any) {
+function handleConfirmFilter(context: any, column: any, checked: any, item: any) {
   context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, checked, item)
 }
 
-function defaultFilterMethod ({ option, row, column }: any) {
+function defaultFilterMethod({ option, row, column }: any) {
   let { data } = option
   let cellValue = XEUtils.get(row, column.property)
   /* eslint-disable eqeqeq */
   return cellValue === data
 }
 
-function renderOptions (h: Function, options: any, optionProps: any) {
+function renderOptions(h: Function, options: any, optionProps: any) {
   let labelProp = optionProps.label || 'label'
   let valueProp = optionProps.value || 'value'
   let disabledProp = optionProps.disabled || 'disabled'
@@ -156,7 +152,7 @@ function renderOptions (h: Function, options: any, optionProps: any) {
   })
 }
 
-function cellText (h: Function, cellValue: any) {
+function cellText(h: Function, cellValue: any) {
   return ['' + (cellValue === null || cellValue === void 0 ? '' : cellValue)]
 }
 
@@ -186,7 +182,7 @@ const renderMap = {
     filterMethod: defaultFilterMethod
   },
   ASelect: {
-    renderEdit (h: Function, renderOpts: any, params: any) {
+    renderEdit(h: Function, renderOpts: any, params: any) {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { row, column } = params
       let { attrs } = renderOpts
@@ -200,7 +196,7 @@ const renderMap = {
             attrs,
             model: {
               value: XEUtils.get(row, column.property),
-              callback (cellValue: any) {
+              callback(cellValue: any) {
                 XEUtils.set(row, column.property, cellValue)
               }
             },
@@ -224,7 +220,7 @@ const renderMap = {
           attrs,
           model: {
             value: XEUtils.get(row, column.property),
-            callback (cellValue: any) {
+            callback(cellValue: any) {
               XEUtils.set(row, column.property, cellValue)
             }
           },
@@ -232,7 +228,7 @@ const renderMap = {
         }, renderOptions(h, options, optionProps))
       ]
     },
-    renderCell (h: Function, renderOpts: any, params: any) {
+    renderCell(h: Function, renderOpts: any, params: any) {
       let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { row, column } = params
       let labelProp = optionProps.label || 'label'
@@ -256,7 +252,7 @@ const renderMap = {
       }
       return cellText(h, '')
     },
-    renderFilter (h: Function, renderOpts: any, params: any, context: any) {
+    renderFilter(h: Function, renderOpts: any, params: any, context: any) {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { column } = params
       let { attrs, events } = renderOpts
@@ -271,12 +267,12 @@ const renderMap = {
             attrs,
             model: {
               value: item.data,
-              callback (optionValue: any) {
+              callback(optionValue: any) {
                 item.data = optionValue
               }
             },
             on: getFilterEvents({
-              [type] (value: any) {
+              [type](value: any) {
                 handleConfirmFilter(context, column, value && value.length > 0, item)
                 if (events && events[type]) {
                   events[type](params, value)
@@ -302,12 +298,12 @@ const renderMap = {
           attrs,
           model: {
             value: item.data,
-            callback (optionValue: any) {
+            callback(optionValue: any) {
               item.data = optionValue
             }
           },
           on: getFilterEvents({
-            change (value: any) {
+            change(value: any) {
               handleConfirmFilter(context, column, value && value.length > 0, item)
               if (events && events[type]) {
                 events[type](params, value)
@@ -317,7 +313,7 @@ const renderMap = {
         }, renderOptions(h, options, optionProps))
       })
     },
-    filterMethod ({ option, row, column }: any) {
+    filterMethod({ option, row, column }: any) {
       let { data } = option
       let { property, filterRender: renderOpts } = column
       let { props = {} } = renderOpts
@@ -334,7 +330,7 @@ const renderMap = {
   },
   ACascader: {
     renderEdit: defaultEditRender,
-    renderCell (h: Function, { props = {} }: any, params: any) {
+    renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
       var values = cellValue || []
@@ -353,7 +349,7 @@ const renderMap = {
   },
   ARangePicker: {
     renderEdit: defaultEditRender,
-    renderCell (h: Function, { props = {} }: any, params: any) {
+    renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
       if (cellValue) {
@@ -372,7 +368,7 @@ const renderMap = {
   },
   ATreeSelect: {
     renderEdit: defaultEditRender,
-    renderCell (h: Function, { props = {} }: any, params: any) {
+    renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
       if (cellValue && (props.treeCheckable || props.multiple)) {
@@ -398,7 +394,7 @@ const renderMap = {
 /**
  * 事件兼容性处理
  */
-function handleClearEvent (params: any, evnt: any, context: any) {
+function handleClearEvent(params: any, evnt: any, context: any) {
   let { getEventTargetNode } = context
   let bodyElem = document.body
   if (
@@ -419,7 +415,7 @@ function handleClearEvent (params: any, evnt: any, context: any) {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install (xtable: typeof VXETable) {
+  install(xtable: typeof VXETable) {
     let { interceptor, renderer } = xtable
     renderer.mixin(renderMap)
     interceptor.add('event.clearFilter', handleClearEvent)
@@ -431,7 +427,7 @@ if (typeof window !== 'undefined' && window.VXETable) {
   window.VXETable.use(VXETablePluginAntd)
 }
 
-function toMomentString (cellValue: any, format: string): string {
+function toMomentString(cellValue: any, format: string): string {
   return cellValue ? cellValue.format(format) : ''
 }
 
