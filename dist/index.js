@@ -122,12 +122,16 @@
     })];
   }
 
-  function getFilterEvents(on, renderOpts, params) {
+  function getFilterEvents(on, renderOpts, params, context) {
     var events = renderOpts.events;
 
     if (events) {
       return _xeUtils["default"].assign({}, _xeUtils["default"].objectMap(events, function (cb) {
         return function () {
+          params = Object.assign({
+            context: context
+          }, params);
+
           for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
             args[_key2] = arguments[_key2];
           }
@@ -176,9 +180,11 @@
           handleConfirmFilter(context, column, !!item.data, item);
 
           if (events && events[type]) {
-            events[type](params, evnt);
+            events[type](Object.assign({
+              context: context
+            }, params), evnt);
           }
-        }), renderOpts, params)
+        }), renderOpts, params, context)
       });
     });
   }
@@ -365,9 +371,11 @@
                 handleConfirmFilter(context, column, value && value.length > 0, item);
 
                 if (events && events[type]) {
-                  events[type](params, value);
+                  events[type](Object.assign({
+                    context: context
+                  }, params), value);
                 }
-              }), renderOpts, params)
+              }), renderOpts, params, context)
             }, _xeUtils["default"].map(optionGroups, function (group, gIndex) {
               return h('a-select-opt-group', {
                 key: gIndex
@@ -393,10 +401,12 @@
                 handleConfirmFilter(context, column, value && value.length > 0, item);
 
                 if (events && events[type]) {
-                  events[type](params, value);
+                  events[type](Object.assign({
+                    context: context
+                  }, params), value);
                 }
               }
-            }, renderOpts, params)
+            }, renderOpts, params, context)
           }, renderOptions(h, options, optionProps));
         });
       },
