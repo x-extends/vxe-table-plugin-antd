@@ -24,8 +24,8 @@ function formatDatePicker(defaultFormat: any) {
   }
 }
 
-function getProps({ $table }: any, { props }: any) {
-  return XEUtils.assign($table.vSize ? { size: $table.vSize } : {}, props)
+function getProps({ $table }: any, { props }: any, defaultProps?: any) {
+  return XEUtils.assign($table.vSize ? { size: $table.vSize } : {}, defaultProps, props)
 }
 
 function getCellEvents(renderOpts: any, params: any) {
@@ -59,23 +59,25 @@ function getCellEvents(renderOpts: any, params: any) {
   return on
 }
 
-function defaultEditRender(h: Function, renderOpts: any, params: any) {
-  let { row, column } = params
-  let { attrs } = renderOpts
-  let props = getProps(params, renderOpts)
-  return [
-    h(renderOpts.name, {
-      props,
-      attrs,
-      model: {
-        value: XEUtils.get(row, column.property),
-        callback(value: any) {
-          XEUtils.set(row, column.property, value)
-        }
-      },
-      on: getCellEvents(renderOpts, params)
-    })
-  ]
+function createEditRender(defaultProps?: any) {
+  return function (h: Function, renderOpts: any, params: any) {
+    let { row, column } = params
+    let { attrs } = renderOpts
+    let props = getProps(params, renderOpts, defaultProps)
+    return [
+      h(renderOpts.name, {
+        props,
+        attrs,
+        model: {
+          value: XEUtils.get(row, column.property),
+          callback(value: any) {
+            XEUtils.set(row, column.property, value)
+          }
+        },
+        on: getCellEvents(renderOpts, params)
+      })
+    ]
+  }
 }
 
 function getFilterEvents(on: any, renderOpts: any, params: any, context: any) {
@@ -89,42 +91,44 @@ function getFilterEvents(on: any, renderOpts: any, params: any, context: any) {
   return on
 }
 
-function defaultFilterRender(h: Function, renderOpts: any, params: any, context: any) {
-  let { column } = params
-  let { name, attrs, events } = renderOpts
-  let props = getProps(params, renderOpts)
-  let type = 'change'
-  switch (name) {
-    case 'AAutoComplete':
-      type = 'select'
-      break
-    case 'AInput':
-      type = 'input'
-      break
-    case 'AInputNumber':
-      type = 'change'
-      break
-  }
-  return column.filters.map((item: any) => {
-    return h(name, {
-      props,
-      attrs,
-      model: {
-        value: item.data,
-        callback(optionValue: any) {
-          item.data = optionValue
-        }
-      },
-      on: getFilterEvents({
-        [type](evnt: any) {
-          handleConfirmFilter(context, column, !!item.data, item)
-          if (events && events[type]) {
-            events[type](Object.assign({ context }, params), evnt)
+function createFilterRender(defaultProps?: any) {
+  return function (h: Function, renderOpts: any, params: any, context: any) {
+    let { column } = params
+    let { name, attrs, events } = renderOpts
+    let props = getProps(params, renderOpts)
+    let type = 'change'
+    switch (name) {
+      case 'AAutoComplete':
+        type = 'select'
+        break
+      case 'AInput':
+        type = 'input'
+        break
+      case 'AInputNumber':
+        type = 'change'
+        break
+    }
+    return column.filters.map((item: any) => {
+      return h(name, {
+        props,
+        attrs,
+        model: {
+          value: item.data,
+          callback(optionValue: any) {
+            item.data = optionValue
           }
-        }
-      }, renderOpts, params, context)
+        },
+        on: getFilterEvents({
+          [type](evnt: any) {
+            handleConfirmFilter(context, column, !!item.data, item)
+            if (events && events[type]) {
+              events[type](Object.assign({ context }, params), evnt)
+            }
+          }
+        }, renderOpts, params, context)
+      })
     })
-  })
+  }
 }
 
 function handleConfirmFilter(context: any, column: any, checked: any, item: any) {
@@ -163,23 +167,23 @@ function cellText(h: Function, cellValue: any) {
 const renderMap = {
   AAutoComplete: {
     autofocus: 'input.ant-input',
-    renderDefault: defaultEditRender,
-    renderEdit: defaultEditRender,
-    renderFilter: defaultFilterRender,
+    renderDefault: createEditRender(),
+    renderEdit: createEditRender(),
+    renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod
   },
   AInput: {
     autofocus: 'input.ant-input',
-    renderDefault: defaultEditRender,
-    renderEdit: defaultEditRender,
-    renderFilter: defaultFilterRender,
+    renderDefault: createEditRender(),
+    renderEdit: createEditRender(),
+    renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod
   },
   AInputNumber: {
     autofocus: 'input.ant-input-number-input',
-    renderDefault: defaultEditRender,
-    renderEdit: defaultEditRender,
-    renderFilter: defaultFilterRender,
+    renderDefault: createEditRender(),
+    renderEdit: createEditRender(),
+    renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod
   },
   ASelect: {
@@ -330,7 +334,7 @@ const renderMap = {
     }
   },
   ACascader: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -341,15 +345,15 @@ const renderMap = {
     }
   },
   ADatePicker: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM-DD')
   },
   AMonthPicker: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM')
   },
   ARangePicker: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -360,15 +364,15 @@ const renderMap = {
     }
   },
   AWeekPicker: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-WW周')
   },
   ATimePicker: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell: formatDatePicker('HH:mm:ss')
   },
   ATreeSelect: {
-    renderEdit: defaultEditRender,
+    renderEdit: createEditRender(),
     renderCell(h: Function, { props = {} }: any, params: any) {
       let { row, column } = params
       let cellValue = XEUtils.get(row, column.property)
@@ -379,15 +383,15 @@ const renderMap = {
     }
   },
   ARate: {
-    renderDefault: defaultEditRender,
-    renderEdit: defaultEditRender,
-    renderFilter: defaultFilterRender,
+    renderDefault: createEditRender(),
+    renderEdit: createEditRender(),
+    renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod
   },
   ASwitch: {
-    renderDefault: defaultEditRender,
-    renderEdit: defaultEditRender,
-    renderFilter: defaultFilterRender,
+    renderDefault: createEditRender(),
+    renderEdit: createEditRender(),
+    renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod
   }
 }
