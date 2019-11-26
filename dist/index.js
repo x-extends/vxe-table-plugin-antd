@@ -1,13 +1,13 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define("vxe-table-plugin-antd", ["exports", "xe-utils/methods/xe-utils"], factory);
+    define("vxe-table-plugin-antd", ["exports", "xe-utils"], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require("xe-utils/methods/xe-utils"));
+    factory(exports, require("xe-utils"));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.xeUtilsMethodsXeUtils);
+    factory(mod.exports, global.XEUtils);
     global.VXETablePluginAntd = mod.exports.default;
   }
 })(this, function (_exports, _xeUtils) {

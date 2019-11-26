@@ -59,7 +59,7 @@ gulp.task('build_umd', function () {
       target: 'es6',
       lib: ['dom', 'es6']
     }))
-    .pipe(replace(`require("xe-utils/methods/xe-utils")`, `require("xe-utils")`))
+    .pipe(replace(`import XEUtils from 'xe-utils/methods/xe-utils';`, `import XEUtils from 'xe-utils';`))
     .pipe(babel({
       moduleId: pack.name,
       presets: ['@babel/env'],
