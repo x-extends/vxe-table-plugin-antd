@@ -75,14 +75,14 @@ VXETable.use(VXETablePluginAntd)
   :data="tableData"
   :edit-config="{trigger: 'click', mode: 'cell'}">
   <vxe-table-column type="selection" width="60"></vxe-table-column>
-  <vxe-table-column type="index" label="Number" width="80"></vxe-table-column>
-  <vxe-table-column prop="name" label="AInput" min-width="140" :edit-render="{name: 'AInput'}"></vxe-table-column>
-  <vxe-table-column prop="age" label="AInputNumber" width="160" :edit-render="{name: 'AInputNumber', props: {max: 35, min: 18}}"></vxe-table-column>
-  <vxe-table-column prop="sex" label="ASelect" width="140" :edit-render="{name: 'ASelect', options: sexList}"></vxe-table-column>
-  <vxe-table-column prop="region" label="ACascader" width="200" :edit-render="{name: 'ACascader', props: {options: regionList}}"></vxe-table-column>
-  <vxe-table-column prop="date7" label="ADatePicker" width="200" :edit-render="{name: 'ADatePicker', props: {type: 'date', format: 'YYYY/MM/DD'}}"></vxe-table-column>
-  <vxe-table-column prop="flag" label="ASwitch" width="100" :edit-render="{name: 'ASwitch', type: 'visible'}"></vxe-table-column>
-  <vxe-table-column prop="rate" label="ARate" width="200" :edit-render="{name: 'ARate', type: 'visible'}"></vxe-table-column>
+  <vxe-table-column type="index" title="Number" width="80"></vxe-table-column>
+  <vxe-table-column field="name" title="AInput" min-width="140" :edit-render="{name: 'AInput'}"></vxe-table-column>
+  <vxe-table-column field="age" title="AInputNumber" width="160" :edit-render="{name: 'AInputNumber', props: {max: 35, min: 18}}"></vxe-table-column>
+  <vxe-table-column field="sex" title="ASelect" width="140" :edit-render="{name: 'ASelect', options: sexList}"></vxe-table-column>
+  <vxe-table-column field="region" title="ACascader" width="200" :edit-render="{name: 'ACascader', props: {options: regionList}}"></vxe-table-column>
+  <vxe-table-column field="date7" title="ADatePicker" width="200" :edit-render="{name: 'ADatePicker', props: {type: 'date', format: 'YYYY/MM/DD'}}"></vxe-table-column>
+  <vxe-table-column field="flag" title="ASwitch" width="100" :edit-render="{name: 'ASwitch', type: 'visible'}"></vxe-table-column>
+  <vxe-table-column field="rate" title="ARate" width="200" :edit-render="{name: 'ARate', type: 'visible'}"></vxe-table-column>
 </vxe-table>
 ```
 
@@ -137,9 +137,9 @@ export default {
   height="600"
   :data="tableData">
   <vxe-table-column type="index" width="60"></vxe-table-column>
-  <vxe-table-column prop="name" label="Name"></vxe-table-column>
-  <vxe-table-column prop="age" label="Age"></vxe-table-column>
-  <vxe-table-column prop="date" label="Date" :filters="[{data: []}]" :filter-render="{name: 'AInput'}"></vxe-table-column>
+  <vxe-table-column field="name" title="Name"></vxe-table-column>
+  <vxe-table-column field="age" title="Age"></vxe-table-column>
+  <vxe-table-column field="date" title="Date" :filters="[{data: []}]" :filter-render="{name: 'AInput'}"></vxe-table-column>
 </vxe-table>
 ```
 
