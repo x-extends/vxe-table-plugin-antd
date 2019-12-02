@@ -333,13 +333,13 @@
               }
             }
 
-            return selectItem ? selectItem[labelProp] : null;
+            return selectItem ? selectItem[labelProp] : value;
           } : function (value) {
             var selectItem = _xeUtils["default"].find(options, function (item) {
               return item[valueProp] === value;
             });
 
-            return selectItem ? selectItem[labelProp] : null;
+            return selectItem ? selectItem[labelProp] : value;
           }).join(';'));
         }
 

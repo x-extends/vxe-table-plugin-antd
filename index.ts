@@ -249,10 +249,10 @@ const renderMap = {
               break
             }
           }
-          return selectItem ? selectItem[labelProp] : null
+          return selectItem ? selectItem[labelProp] : value
         } : (value: any) => {
           let selectItem = XEUtils.find(options, (item: any) => item[valueProp] === value)
-          return selectItem ? selectItem[labelProp] : null
+          return selectItem ? selectItem[labelProp] : value
         }).join(';'))
       }
       return cellText(h, '')
