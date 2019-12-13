@@ -10,7 +10,7 @@
     factory(mod.exports, global.XEUtils);
     global.VXETablePluginAntd = mod.exports.default;
   }
-})(this, function (_exports, _xeUtils) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _xeUtils) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
