@@ -14,7 +14,8 @@ $vxe-table-validate-error-color: #f56c6c;
       width: 180px;
     }
   }
-  .vxe-cell {
+  .vxe-cell,
+  .vxe-tree-cell {
     & > .ant-input,
     & > .ant-input-number,
     & > .ant-select,
@@ -31,7 +32,8 @@ $vxe-table-validate-error-color: #f56c6c;
     }
   }
   .col--valid-error {
-    & > .vxe-cell {
+    & > .vxe-cell,
+    & > .vxe-tree-cell {
       & > .ant-input,
       & > .ant-select .ant-input,
       & > .ant-select .ant-select-selection,
@@ -45,7 +47,8 @@ $vxe-table-validate-error-color: #f56c6c;
   }
   &.c--highlight,
   .vxe-table.c--highlight {
-    .vxe-cell {
+    .vxe-cell,
+    .vxe-tree-cell {
       & > .ant-input,
       & > .ant-input-number {
         padding: 0;
