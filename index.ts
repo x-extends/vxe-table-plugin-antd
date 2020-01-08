@@ -428,10 +428,6 @@ export const VXETablePluginAntd = {
   }
 }
 
-if (typeof window !== 'undefined' && window.VXETable) {
-  window.VXETable.use(VXETablePluginAntd)
-}
-
 function toMomentString(cellValue: any, format: string): string {
   return cellValue ? cellValue.format(format) : ''
 }
@@ -450,5 +446,9 @@ declare module 'xe-utils/methods/xe-utils' {
 XEUtils.mixin({
   toMomentString
 })
+
+if (typeof window !== 'undefined' && window.VXETable) {
+  window.VXETable.use(VXETablePluginAntd)
+}
 
 export default VXETablePluginAntd
