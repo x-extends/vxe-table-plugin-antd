@@ -1,6 +1,10 @@
 import XEUtils from 'xe-utils/methods/xe-utils'
 import VXETable from 'vxe-table/lib/vxe-table'
 
+function isEmptyValue (cellValue: any) {
+  return cellValue === null || cellValue === undefined || cellValue === ''
+}
+
 function matchCascaderData (index: number, list: Array<any>, values: Array<any>, labels: Array<any>) {
   let val = values[index]
   if (list && values.length > index) {
@@ -13,14 +17,9 @@ function matchCascaderData (index: number, list: Array<any>, values: Array<any>,
   }
 }
 
-function formatDatePicker (defaultFormat: any) {
-  return function (h: Function, { props = {} }: any, params: any) {
-    let { row, column } = params
-    let cellValue = XEUtils.get(row, column.property)
-    if (cellValue) {
-      cellValue = cellValue.format(props.format || defaultFormat)
-    }
-    return cellText(h, cellValue)
+function formatDatePicker (defaultFormat: string) {
+  return function (h: Function, renderOpts: any, params: any) {
+    return cellText(h, getDatePickerCellValue(renderOpts, params, defaultFormat))
   }
 }
 
@@ -57,6 +56,71 @@ function getCellEvents (renderOpts: any, params: any) {
     }), on)
   }
   return on
+}
+
+function getSelectCellValue (renderOpts: any, params: any) {
+  let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
+  let { row, column } = params
+  let labelProp = optionProps.label || 'label'
+  let valueProp = optionProps.value || 'value'
+  let groupOptions = optionGroupProps.options || 'options'
+  let cellValue = XEUtils.get(row, column.property)
+  if (!isEmptyValue(cellValue)) {
+    return XEUtils.map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? (value: any) => {
+      let selectItem
+      for (let index = 0; index < optionGroups.length; index++) {
+        selectItem = XEUtils.find(optionGroups[index][groupOptions], (item: any) => item[valueProp] === value)
+        if (selectItem) {
+          break
+        }
+      }
+      return selectItem ? selectItem[labelProp] : value
+    } : (value: any) => {
+      let selectItem = XEUtils.find(options, (item: any) => item[valueProp] === value)
+      return selectItem ? selectItem[labelProp] : value
+    }).join(';')
+  }
+  return null
+}
+
+function getCascaderCellValue (renderOpts: any, params: any) {
+  let { props = {} } = renderOpts
+  let { row, column } = params
+  let cellValue = XEUtils.get(row, column.property)
+  var values = cellValue || []
+  var labels: Array<any> = []
+  matchCascaderData(0, props.options, values, labels)
+  return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `)
+}
+
+function getRangePickerCellValue (renderOpts: any, params: any) {
+  let { props = {} } = renderOpts
+  let { row, column } = params
+  let cellValue = XEUtils.get(row, column.property)
+  if (cellValue) {
+    cellValue = XEUtils.map(cellValue, (date: any) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
+  }
+  return cellValue
+}
+
+function getTreeSelectCellValue (renderOpts: any, params: any) {
+  let { props = {} } = renderOpts
+  let { row, column } = params
+  let cellValue = XEUtils.get(row, column.property)
+  if (cellValue && (props.treeCheckable || props.multiple)) {
+    cellValue = cellValue.join(';')
+  }
+  return cellValue
+}
+
+function getDatePickerCellValue (renderOpts: any, params: any, defaultFormat: string) {
+  let { props = {} } = renderOpts
+  let { row, column } = params
+  let cellValue = XEUtils.get(row, column.property)
+  if (cellValue) {
+    cellValue = cellValue.format(props.format || defaultFormat)
+  }
+  return cellValue
 }
 
 function createEditRender (defaultProps?: any) {
@@ -158,7 +222,7 @@ function renderOptions (h: Function, options: any, optionProps: any) {
 }
 
 function cellText (h: Function, cellValue: any) {
-  return ['' + (cellValue === null || cellValue === void 0 ? '' : cellValue)]
+  return ['' + (isEmptyValue(cellValue) ? '' : cellValue)]
 }
 
 function createFormItemRender (defaultProps?: any) {
@@ -189,13 +253,47 @@ function getFormProps ({ $form }: any, { props }: any, defaultProps?: any) {
 
 function getFormEvents (renderOpts: any, params: any, context: any) {
   let { events }: any = renderOpts
-  let on
+  let { $form } = params
+  let type = 'change'
+  switch (name) {
+    case 'AAutoComplete':
+      type = 'select'
+      break
+    case 'AInput':
+      type = 'input'
+      break
+    case 'AInputNumber':
+      type = 'change'
+      break
+  }
+  let on = {
+    [type]: (evnt: any) => {
+      $form.updateStatus(params)
+      if (events && events[type]) {
+        events[type](params, evnt)
+      }
+    }
+  }
   if (events) {
-    on = XEUtils.assign({}, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
+    return XEUtils.assign({}, XEUtils.objectMap(events, (cb: Function) => function (...args: any[]) {
       cb.apply(null, [params].concat.apply(params, args))
     }), on)
   }
   return on
+}
+
+function createDatePickerExportMethod (defaultFormat: string, isEdit?: boolean) {
+  const renderProperty = isEdit ? 'editRender' : 'cellRender'
+  return function (params: any) {
+    return getDatePickerCellValue(params.column[renderProperty], params, defaultFormat)
+  }
+}
+
+function createExportMethod (valueMethod: Function, isEdit?: boolean) {
+  const renderProperty = isEdit ? 'editRender' : 'cellRender'
+  return function (params: any) {
+    return valueMethod(params.column[renderProperty], params)
+  }
 }
 
 /**
@@ -274,28 +372,7 @@ const renderMap = {
       ]
     },
     renderCell (h: Function, renderOpts: any, params: any) {
-      let { options, optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
-      let { row, column } = params
-      let labelProp = optionProps.label || 'label'
-      let valueProp = optionProps.value || 'value'
-      let groupOptions = optionGroupProps.options || 'options'
-      let cellValue = XEUtils.get(row, column.property)
-      if (!(cellValue === null || cellValue === undefined || cellValue === '')) {
-        return cellText(h, XEUtils.map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? (value: any) => {
-          let selectItem
-          for (let index = 0; index < optionGroups.length; index++) {
-            selectItem = XEUtils.find(optionGroups[index][groupOptions], (item: any) => item[valueProp] === value)
-            if (selectItem) {
-              break
-            }
-          }
-          return selectItem ? selectItem[labelProp] : value
-        } : (value: any) => {
-          let selectItem = XEUtils.find(options, (item: any) => item[valueProp] === value)
-          return selectItem ? selectItem[labelProp] : value
-        }).join(';'))
-      }
-      return cellText(h, '')
+      return cellText(h, getSelectCellValue(renderOpts, params))
     },
     renderFilter (h: Function, renderOpts: any, params: any, context: any) {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
@@ -417,63 +494,64 @@ const renderMap = {
           on: getFormEvents(renderOpts, params, context)
         }, renderOptions(h, options, optionProps))
       ]
-    }
+    },
+    editExportMethod: createExportMethod(getSelectCellValue, true),
+    cellExportMethod: createExportMethod(getSelectCellValue)
   },
   ACascader: {
     renderEdit: createEditRender(),
-    renderCell (h: Function, { props = {} }: any, params: any) {
-      let { row, column } = params
-      let cellValue = XEUtils.get(row, column.property)
-      var values = cellValue || []
-      var labels: Array<any> = []
-      matchCascaderData(0, props.options, values, labels)
-      return cellText(h, (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `))
+    renderCell (h: Function, renderOpts: any, params: any) {
+      return cellText(h, getCascaderCellValue(renderOpts, params))
     },
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createExportMethod(getCascaderCellValue, true),
+    cellExportMethod: createExportMethod(getCascaderCellValue)
   },
   ADatePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM-DD'),
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createDatePickerExportMethod('YYYY-MM-DD', true),
+    cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
   },
   AMonthPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM'),
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createDatePickerExportMethod('YYYY-MM', true),
+    cellExportMethod: createDatePickerExportMethod('YYYY-MM')
   },
   ARangePicker: {
     renderEdit: createEditRender(),
-    renderCell (h: Function, { props = {} }: any, params: any) {
-      let { row, column } = params
-      let cellValue = XEUtils.get(row, column.property)
-      if (cellValue) {
-        cellValue = XEUtils.map(cellValue, (date: any) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
-      }
-      return cellText(h, cellValue)
+    renderCell (h: Function, renderOpts: any, params: any) {
+      return cellText(h, getRangePickerCellValue(renderOpts, params))
     },
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createExportMethod(getRangePickerCellValue, true),
+    cellExportMethod: createExportMethod(getRangePickerCellValue)
   },
   AWeekPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-WW周'),
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createDatePickerExportMethod('YYYY-WW周', true),
+    cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
   },
   ATimePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('HH:mm:ss'),
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createDatePickerExportMethod('HH:mm:ss', true),
+    cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
   },
   ATreeSelect: {
     renderEdit: createEditRender(),
-    renderCell (h: Function, { props = {} }: any, params: any) {
-      let { row, column } = params
-      let cellValue = XEUtils.get(row, column.property)
-      if (cellValue && (props.treeCheckable || props.multiple)) {
-        cellValue = cellValue.join(';')
-      }
-      return cellText(h, cellValue)
+    renderCell (h: Function, renderOpts: any, params: any) {
+      return cellText(h, getTreeSelectCellValue(renderOpts, params))
     },
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    editExportMethod: createExportMethod(getTreeSelectCellValue, true),
+    cellExportMethod: createExportMethod(getTreeSelectCellValue)
   },
   ARate: {
     renderDefault: createEditRender(),

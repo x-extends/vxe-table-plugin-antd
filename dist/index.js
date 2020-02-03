@@ -23,6 +23,10 @@
 
   function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+  function isEmptyValue(cellValue) {
+    return cellValue === null || cellValue === undefined || cellValue === '';
+  }
+
   function matchCascaderData(index, list, values, labels) {
     var val = values[index];
 
@@ -37,25 +41,14 @@
   }
 
   function formatDatePicker(defaultFormat) {
-    return function (h, _ref, params) {
-      var _ref$props = _ref.props,
-          props = _ref$props === void 0 ? {} : _ref$props;
-      var row = params.row,
-          column = params.column;
-
-      var cellValue = _xeUtils["default"].get(row, column.property);
-
-      if (cellValue) {
-        cellValue = cellValue.format(props.format || defaultFormat);
-      }
-
-      return cellText(h, cellValue);
+    return function (h, renderOpts, params) {
+      return cellText(h, getDatePickerCellValue(renderOpts, params, defaultFormat));
     };
   }
 
-  function getProps(_ref2, _ref3, defaultProps) {
-    var $table = _ref2.$table;
-    var props = _ref3.props;
+  function getProps(_ref, _ref2, defaultProps) {
+    var $table = _ref.$table;
+    var props = _ref2.props;
     return _xeUtils["default"].assign($table.vSize ? {
       size: $table.vSize
     } : {}, defaultProps, props);
@@ -102,6 +95,111 @@
     }
 
     return on;
+  }
+
+  function getSelectCellValue(renderOpts, params) {
+    var options = renderOpts.options,
+        optionGroups = renderOpts.optionGroups,
+        _renderOpts$props = renderOpts.props,
+        props = _renderOpts$props === void 0 ? {} : _renderOpts$props,
+        _renderOpts$optionPro = renderOpts.optionProps,
+        optionProps = _renderOpts$optionPro === void 0 ? {} : _renderOpts$optionPro,
+        _renderOpts$optionGro = renderOpts.optionGroupProps,
+        optionGroupProps = _renderOpts$optionGro === void 0 ? {} : _renderOpts$optionGro;
+    var row = params.row,
+        column = params.column;
+    var labelProp = optionProps.label || 'label';
+    var valueProp = optionProps.value || 'value';
+    var groupOptions = optionGroupProps.options || 'options';
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    if (!isEmptyValue(cellValue)) {
+      return _xeUtils["default"].map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? function (value) {
+        var selectItem;
+
+        for (var index = 0; index < optionGroups.length; index++) {
+          selectItem = _xeUtils["default"].find(optionGroups[index][groupOptions], function (item) {
+            return item[valueProp] === value;
+          });
+
+          if (selectItem) {
+            break;
+          }
+        }
+
+        return selectItem ? selectItem[labelProp] : value;
+      } : function (value) {
+        var selectItem = _xeUtils["default"].find(options, function (item) {
+          return item[valueProp] === value;
+        });
+
+        return selectItem ? selectItem[labelProp] : value;
+      }).join(';');
+    }
+
+    return null;
+  }
+
+  function getCascaderCellValue(renderOpts, params) {
+    var _renderOpts$props2 = renderOpts.props,
+        props = _renderOpts$props2 === void 0 ? {} : _renderOpts$props2;
+    var row = params.row,
+        column = params.column;
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    var values = cellValue || [];
+    var labels = [];
+    matchCascaderData(0, props.options, values, labels);
+    return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(" ".concat(props.separator || '/', " "));
+  }
+
+  function getRangePickerCellValue(renderOpts, params) {
+    var _renderOpts$props3 = renderOpts.props,
+        props = _renderOpts$props3 === void 0 ? {} : _renderOpts$props3;
+    var row = params.row,
+        column = params.column;
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    if (cellValue) {
+      cellValue = _xeUtils["default"].map(cellValue, function (date) {
+        return date.format(props.format || 'YYYY-MM-DD');
+      }).join(' ~ ');
+    }
+
+    return cellValue;
+  }
+
+  function getTreeSelectCellValue(renderOpts, params) {
+    var _renderOpts$props4 = renderOpts.props,
+        props = _renderOpts$props4 === void 0 ? {} : _renderOpts$props4;
+    var row = params.row,
+        column = params.column;
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    if (cellValue && (props.treeCheckable || props.multiple)) {
+      cellValue = cellValue.join(';');
+    }
+
+    return cellValue;
+  }
+
+  function getDatePickerCellValue(renderOpts, params, defaultFormat) {
+    var _renderOpts$props5 = renderOpts.props,
+        props = _renderOpts$props5 === void 0 ? {} : _renderOpts$props5;
+    var row = params.row,
+        column = params.column;
+
+    var cellValue = _xeUtils["default"].get(row, column.property);
+
+    if (cellValue) {
+      cellValue = cellValue.format(props.format || defaultFormat);
+    }
+
+    return cellValue;
   }
 
   function createEditRender(defaultProps) {
@@ -197,10 +295,10 @@
     context[column.filterMultiple ? 'changeMultipleOption' : 'changeRadioOption']({}, checked, item);
   }
 
-  function defaultFilterMethod(_ref4) {
-    var option = _ref4.option,
-        row = _ref4.row,
-        column = _ref4.column;
+  function defaultFilterMethod(_ref3) {
+    var option = _ref3.option,
+        row = _ref3.row,
+        column = _ref3.column;
     var data = option.data;
 
     var cellValue = _xeUtils["default"].get(row, column.property);
@@ -226,7 +324,7 @@
   }
 
   function cellText(h, cellValue) {
-    return ['' + (cellValue === null || cellValue === void 0 ? '' : cellValue)];
+    return ['' + (isEmptyValue(cellValue) ? '' : cellValue)];
   }
 
   function createFormItemRender(defaultProps) {
@@ -250,9 +348,9 @@
     };
   }
 
-  function getFormProps(_ref5, _ref6, defaultProps) {
-    var $form = _ref5.$form;
-    var props = _ref6.props;
+  function getFormProps(_ref4, _ref5, defaultProps) {
+    var $form = _ref4.$form;
+    var props = _ref5.props;
     return _xeUtils["default"].assign($form.vSize ? {
       size: $form.vSize
     } : {}, defaultProps, props);
@@ -260,10 +358,33 @@
 
   function getFormEvents(renderOpts, params, context) {
     var events = renderOpts.events;
-    var on;
+    var $form = params.$form;
+    var type = 'change';
+
+    switch (name) {
+      case 'AAutoComplete':
+        type = 'select';
+        break;
+
+      case 'AInput':
+        type = 'input';
+        break;
+
+      case 'AInputNumber':
+        type = 'change';
+        break;
+    }
+
+    var on = _defineProperty({}, type, function (evnt) {
+      $form.updateStatus(params);
+
+      if (events && events[type]) {
+        events[type](params, evnt);
+      }
+    });
 
     if (events) {
-      on = _xeUtils["default"].assign({}, _xeUtils["default"].objectMap(events, function (cb) {
+      return _xeUtils["default"].assign({}, _xeUtils["default"].objectMap(events, function (cb) {
         return function () {
           for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
             args[_key3] = arguments[_key3];
@@ -275,6 +396,20 @@
     }
 
     return on;
+  }
+
+  function createDatePickerExportMethod(defaultFormat, isEdit) {
+    var renderProperty = isEdit ? 'editRender' : 'cellRender';
+    return function (params) {
+      return getDatePickerCellValue(params.column[renderProperty], params, defaultFormat);
+    };
+  }
+
+  function createExportMethod(valueMethod, isEdit) {
+    var renderProperty = isEdit ? 'editRender' : 'cellRender';
+    return function (params) {
+      return valueMethod(params.column[renderProperty], params);
+    };
   }
   /**
    * 渲染函数
@@ -310,10 +445,10 @@
       renderEdit: function renderEdit(h, renderOpts, params) {
         var options = renderOpts.options,
             optionGroups = renderOpts.optionGroups,
-            _renderOpts$optionPro = renderOpts.optionProps,
-            optionProps = _renderOpts$optionPro === void 0 ? {} : _renderOpts$optionPro,
-            _renderOpts$optionGro = renderOpts.optionGroupProps,
-            optionGroupProps = _renderOpts$optionGro === void 0 ? {} : _renderOpts$optionGro;
+            _renderOpts$optionPro2 = renderOpts.optionProps,
+            optionProps = _renderOpts$optionPro2 === void 0 ? {} : _renderOpts$optionPro2,
+            _renderOpts$optionGro2 = renderOpts.optionGroupProps,
+            optionGroupProps = _renderOpts$optionGro2 === void 0 ? {} : _renderOpts$optionGro2;
         var row = params.row,
             column = params.column;
         var attrs = renderOpts.attrs;
@@ -354,47 +489,7 @@
         }, renderOptions(h, options, optionProps))];
       },
       renderCell: function renderCell(h, renderOpts, params) {
-        var options = renderOpts.options,
-            optionGroups = renderOpts.optionGroups,
-            _renderOpts$props = renderOpts.props,
-            props = _renderOpts$props === void 0 ? {} : _renderOpts$props,
-            _renderOpts$optionPro2 = renderOpts.optionProps,
-            optionProps = _renderOpts$optionPro2 === void 0 ? {} : _renderOpts$optionPro2,
-            _renderOpts$optionGro2 = renderOpts.optionGroupProps,
-            optionGroupProps = _renderOpts$optionGro2 === void 0 ? {} : _renderOpts$optionGro2;
-        var row = params.row,
-            column = params.column;
-        var labelProp = optionProps.label || 'label';
-        var valueProp = optionProps.value || 'value';
-        var groupOptions = optionGroupProps.options || 'options';
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
-
-        if (!(cellValue === null || cellValue === undefined || cellValue === '')) {
-          return cellText(h, _xeUtils["default"].map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? function (value) {
-            var selectItem;
-
-            for (var index = 0; index < optionGroups.length; index++) {
-              selectItem = _xeUtils["default"].find(optionGroups[index][groupOptions], function (item) {
-                return item[valueProp] === value;
-              });
-
-              if (selectItem) {
-                break;
-              }
-            }
-
-            return selectItem ? selectItem[labelProp] : value;
-          } : function (value) {
-            var selectItem = _xeUtils["default"].find(options, function (item) {
-              return item[valueProp] === value;
-            });
-
-            return selectItem ? selectItem[labelProp] : value;
-          }).join(';'));
-        }
-
-        return cellText(h, '');
+        return cellText(h, getSelectCellValue(renderOpts, params));
       },
       renderFilter: function renderFilter(h, renderOpts, params, context) {
         var options = renderOpts.options,
@@ -465,15 +560,15 @@
           }, renderOptions(h, options, optionProps));
         });
       },
-      filterMethod: function filterMethod(_ref7) {
-        var option = _ref7.option,
-            row = _ref7.row,
-            column = _ref7.column;
+      filterMethod: function filterMethod(_ref6) {
+        var option = _ref6.option,
+            row = _ref6.row,
+            column = _ref6.column;
         var data = option.data;
         var property = column.property,
             renderOpts = column.filterRender;
-        var _renderOpts$props2 = renderOpts.props,
-            props = _renderOpts$props2 === void 0 ? {} : _renderOpts$props2;
+        var _renderOpts$props6 = renderOpts.props,
+            props = _renderOpts$props6 === void 0 ? {} : _renderOpts$props6;
 
         var cellValue = _xeUtils["default"].get(row, property);
 
@@ -534,82 +629,64 @@
           },
           on: getFormEvents(renderOpts, params, context)
         }, renderOptions(h, options, optionProps))];
-      }
+      },
+      editExportMethod: createExportMethod(getSelectCellValue, true),
+      cellExportMethod: createExportMethod(getSelectCellValue)
     },
     ACascader: {
       renderEdit: createEditRender(),
-      renderCell: function renderCell(h, _ref8, params) {
-        var _ref8$props = _ref8.props,
-            props = _ref8$props === void 0 ? {} : _ref8$props;
-        var row = params.row,
-            column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
-
-        var values = cellValue || [];
-        var labels = [];
-        matchCascaderData(0, props.options, values, labels);
-        return cellText(h, (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(" ".concat(props.separator || '/', " ")));
+      renderCell: function renderCell(h, renderOpts, params) {
+        return cellText(h, getCascaderCellValue(renderOpts, params));
       },
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createExportMethod(getCascaderCellValue, true),
+      cellExportMethod: createExportMethod(getCascaderCellValue)
     },
     ADatePicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-MM-DD'),
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createDatePickerExportMethod('YYYY-MM-DD', true),
+      cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
     },
     AMonthPicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-MM'),
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createDatePickerExportMethod('YYYY-MM', true),
+      cellExportMethod: createDatePickerExportMethod('YYYY-MM')
     },
     ARangePicker: {
       renderEdit: createEditRender(),
-      renderCell: function renderCell(h, _ref9, params) {
-        var _ref9$props = _ref9.props,
-            props = _ref9$props === void 0 ? {} : _ref9$props;
-        var row = params.row,
-            column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
-
-        if (cellValue) {
-          cellValue = _xeUtils["default"].map(cellValue, function (date) {
-            return date.format(props.format || 'YYYY-MM-DD');
-          }).join(' ~ ');
-        }
-
-        return cellText(h, cellValue);
+      renderCell: function renderCell(h, renderOpts, params) {
+        return cellText(h, getRangePickerCellValue(renderOpts, params));
       },
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createExportMethod(getRangePickerCellValue, true),
+      cellExportMethod: createExportMethod(getRangePickerCellValue)
     },
     AWeekPicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-WW周'),
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createDatePickerExportMethod('YYYY-WW周', true),
+      cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
     },
     ATimePicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('HH:mm:ss'),
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createDatePickerExportMethod('HH:mm:ss', true),
+      cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
     },
     ATreeSelect: {
       renderEdit: createEditRender(),
-      renderCell: function renderCell(h, _ref10, params) {
-        var _ref10$props = _ref10.props,
-            props = _ref10$props === void 0 ? {} : _ref10$props;
-        var row = params.row,
-            column = params.column;
-
-        var cellValue = _xeUtils["default"].get(row, column.property);
-
-        if (cellValue && (props.treeCheckable || props.multiple)) {
-          cellValue = cellValue.join(';');
-        }
-
-        return cellText(h, cellValue);
+      renderCell: function renderCell(h, renderOpts, params) {
+        return cellText(h, getTreeSelectCellValue(renderOpts, params));
       },
-      renderItem: createFormItemRender()
+      renderItem: createFormItemRender(),
+      editExportMethod: createExportMethod(getTreeSelectCellValue, true),
+      cellExportMethod: createExportMethod(getTreeSelectCellValue)
     },
     ARate: {
       renderDefault: createEditRender(),

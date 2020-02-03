@@ -1,6 +1,6 @@
 {
   "name": "vxe-table-plugin-antd",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库",
   "scripts": {
     "lib": "gulp build"
@@ -62,7 +62,8 @@
     "url": "git+https://github.com/xuliangzhan/vxe-table-plugin-antd.git"
   },
   "keywords": [
-    "vxe-table-plugin-antd"
+    "vxe-table",
+    "vxe-table plugins"
   ],
   "author": {
     "name": "Xu Liangzhan",
