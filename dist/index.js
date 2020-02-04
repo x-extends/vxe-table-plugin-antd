@@ -330,7 +330,7 @@
   function createFormItemRender(defaultProps) {
     return function (h, renderOpts, params, context) {
       var data = params.data,
-          field = params.field;
+          property = params.property;
       var name = renderOpts.name;
       var attrs = renderOpts.attrs;
       var props = getFormProps(context, renderOpts, defaultProps);
@@ -338,9 +338,9 @@
         attrs: attrs,
         props: props,
         model: {
-          value: _xeUtils["default"].get(data, field),
+          value: _xeUtils["default"].get(data, property),
           callback: function callback(value) {
-            _xeUtils["default"].set(data, field, value);
+            _xeUtils["default"].set(data, property, value);
           }
         },
         on: getFormEvents(renderOpts, params, context)
