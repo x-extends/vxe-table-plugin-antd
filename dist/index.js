@@ -664,8 +664,8 @@
           on: getFormEvents(renderOpts, params, context)
         }, renderOptions(h, options, optionProps))];
       },
-      editExportMethod: createExportMethod(getSelectCellValue, true),
-      cellExportMethod: createExportMethod(getSelectCellValue)
+      cellExportMethod: createExportMethod(getSelectCellValue),
+      editCellExportMethod: createExportMethod(getSelectCellValue, true)
     },
     ACascader: {
       renderEdit: createEditRender(),
@@ -673,22 +673,22 @@
         return cellText(h, getCascaderCellValue(renderOpts, params));
       },
       renderItem: createFormItemRender(),
-      editExportMethod: createExportMethod(getCascaderCellValue, true),
-      cellExportMethod: createExportMethod(getCascaderCellValue)
+      cellExportMethod: createExportMethod(getCascaderCellValue),
+      editCellExportMethod: createExportMethod(getCascaderCellValue, true)
     },
     ADatePicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-MM-DD'),
       renderItem: createFormItemRender(),
-      editExportMethod: createDatePickerExportMethod('YYYY-MM-DD', true),
-      cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
+      cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD'),
+      editCellExportMethod: createDatePickerExportMethod('YYYY-MM-DD', true)
     },
     AMonthPicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-MM'),
       renderItem: createFormItemRender(),
-      editExportMethod: createDatePickerExportMethod('YYYY-MM', true),
-      cellExportMethod: createDatePickerExportMethod('YYYY-MM')
+      cellExportMethod: createDatePickerExportMethod('YYYY-MM'),
+      editCellExportMethod: createDatePickerExportMethod('YYYY-MM', true)
     },
     ARangePicker: {
       renderEdit: createEditRender(),
@@ -696,22 +696,22 @@
         return cellText(h, getRangePickerCellValue(renderOpts, params));
       },
       renderItem: createFormItemRender(),
-      editExportMethod: createExportMethod(getRangePickerCellValue, true),
-      cellExportMethod: createExportMethod(getRangePickerCellValue)
+      cellExportMethod: createExportMethod(getRangePickerCellValue),
+      editCellExportMethod: createExportMethod(getRangePickerCellValue, true)
     },
     AWeekPicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('YYYY-WW周'),
       renderItem: createFormItemRender(),
-      editExportMethod: createDatePickerExportMethod('YYYY-WW周', true),
-      cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
+      cellExportMethod: createDatePickerExportMethod('YYYY-WW周'),
+      editCellExportMethod: createDatePickerExportMethod('YYYY-WW周', true)
     },
     ATimePicker: {
       renderEdit: createEditRender(),
       renderCell: formatDatePicker('HH:mm:ss'),
       renderItem: createFormItemRender(),
-      editExportMethod: createDatePickerExportMethod('HH:mm:ss', true),
-      cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
+      cellExportMethod: createDatePickerExportMethod('HH:mm:ss'),
+      editCellExportMethod: createDatePickerExportMethod('HH:mm:ss', true)
     },
     ATreeSelect: {
       renderEdit: createEditRender(),
@@ -719,8 +719,8 @@
         return cellText(h, getTreeSelectCellValue(renderOpts, params));
       },
       renderItem: createFormItemRender(),
-      editExportMethod: createExportMethod(getTreeSelectCellValue, true),
-      cellExportMethod: createExportMethod(getTreeSelectCellValue)
+      cellExportMethod: createExportMethod(getTreeSelectCellValue),
+      editCellExportMethod: createExportMethod(getTreeSelectCellValue, true)
     },
     ARate: {
       renderDefault: createEditRender(),
