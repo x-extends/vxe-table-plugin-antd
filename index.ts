@@ -144,6 +144,22 @@ function createEditRender (defaultProps?: any) {
   }
 }
 
+function defaultButtonEditRender (h: Function, renderOpts: any, params: any) {
+  const { attrs } = renderOpts
+  const props: any = getProps(params, renderOpts)
+  return [
+    h('a-button', {
+      attrs,
+      props,
+      on: getCellEvents(renderOpts, params)
+    }, cellText(h, renderOpts.content))
+  ]
+}
+
+function defaultButtonsEditRender (h: Function, renderOpts: any, params: any) {
+  return renderOpts.children.map((childRenderOpts: any) => defaultButtonEditRender(h, childRenderOpts, params)[0])
+}
+
 function getFilterEvents (on: any, renderOpts: any, params: any) {
   let { events } = renderOpts
   if (events) {
@@ -230,7 +246,7 @@ function createFormItemRender (defaultProps?: any) {
     let { data, property } = params
     let { name } = renderOpts
     let { attrs }: any = renderOpts
-    let props: any = getFormProps(params, renderOpts, defaultProps)
+    let props: any = getFormItemProps(params, renderOpts, defaultProps)
     return [
       h(name, {
         attrs,
@@ -247,7 +263,23 @@ function createFormItemRender (defaultProps?: any) {
   }
 }
 
-function getFormProps ({ $form }: any, { props }: any, defaultProps?: any) {
+function defaultButtonItemRender (h: Function, renderOpts: any, params: any) {
+  const { attrs } = renderOpts
+  const props: any = getFormItemProps(params, renderOpts)
+  return [
+    h('a-button', {
+      attrs,
+      props,
+      on: getFormEvents(renderOpts, params)
+    }, cellText(h, props.content))
+  ]
+}
+
+function defaultButtonsItemRender (h: Function, renderOpts: any, params: any) {
+  return renderOpts.children.map((childRenderOpts: any) => defaultButtonItemRender(h, childRenderOpts, params)[0])
+}
+
+function getFormItemProps ({ $form }: any, { props }: any, defaultProps?: any) {
   return XEUtils.assign($form.vSize ? { size: $form.vSize } : {}, defaultProps, props)
 }
 
@@ -301,7 +333,7 @@ function createFormItemRadioAndCheckboxRender () {
     let { name, options, optionProps = {} } = renderOpts
     let { data, property } = params
     let { attrs } = renderOpts
-    let props: any = getFormProps(params, renderOpts)
+    let props: any = getFormItemProps(params, renderOpts)
     let labelProp: string = optionProps.label || 'label'
     let valueProp: string = optionProps.value || 'value'
     let disabledProp: string = optionProps.disabled || 'disabled'
@@ -485,7 +517,7 @@ const renderMap = {
       let { options, optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
       let { data, property } = params
       let { attrs } = renderOpts
-      let props: any = getFormProps(params, renderOpts)
+      let props: any = getFormItemProps(params, renderOpts)
       if (optionGroups) {
         let groupOptions: string = optionGroupProps.options || 'options'
         let groupLabel: string = optionGroupProps.label || 'label'
@@ -604,6 +636,16 @@ const renderMap = {
   },
   ACheckbox: {
     renderItem: createFormItemRadioAndCheckboxRender()
+  },
+  AButton: {
+    renderEdit: defaultButtonEditRender,
+    renderDefault: defaultButtonEditRender,
+    renderItem: defaultButtonItemRender
+  },
+  AButtons: {
+    renderEdit: defaultButtonsEditRender,
+    renderDefault: defaultButtonsEditRender,
+    renderItem: defaultButtonsItemRender
   }
 }
 

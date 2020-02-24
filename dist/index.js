@@ -222,6 +222,22 @@
     };
   }
 
+  function defaultButtonEditRender(h, renderOpts, params) {
+    var attrs = renderOpts.attrs;
+    var props = getProps(params, renderOpts);
+    return [h('a-button', {
+      attrs: attrs,
+      props: props,
+      on: getCellEvents(renderOpts, params)
+    }, cellText(h, renderOpts.content))];
+  }
+
+  function defaultButtonsEditRender(h, renderOpts, params) {
+    return renderOpts.children.map(function (childRenderOpts) {
+      return defaultButtonEditRender(h, childRenderOpts, params)[0];
+    });
+  }
+
   function getFilterEvents(on, renderOpts, params) {
     var events = renderOpts.events;
 
@@ -328,7 +344,7 @@
           property = params.property;
       var name = renderOpts.name;
       var attrs = renderOpts.attrs;
-      var props = getFormProps(params, renderOpts, defaultProps);
+      var props = getFormItemProps(params, renderOpts, defaultProps);
       return [h(name, {
         attrs: attrs,
         props: props,
@@ -343,7 +359,23 @@
     };
   }
 
-  function getFormProps(_ref4, _ref5, defaultProps) {
+  function defaultButtonItemRender(h, renderOpts, params) {
+    var attrs = renderOpts.attrs;
+    var props = getFormItemProps(params, renderOpts);
+    return [h('a-button', {
+      attrs: attrs,
+      props: props,
+      on: getFormEvents(renderOpts, params)
+    }, cellText(h, props.content))];
+  }
+
+  function defaultButtonsItemRender(h, renderOpts, params) {
+    return renderOpts.children.map(function (childRenderOpts) {
+      return defaultButtonItemRender(h, childRenderOpts, params)[0];
+    });
+  }
+
+  function getFormItemProps(_ref4, _ref5, defaultProps) {
     var $form = _ref4.$form;
     var props = _ref5.props;
     return _xeUtils["default"].assign($form.vSize ? {
@@ -416,7 +448,7 @@
       var data = params.data,
           property = params.property;
       var attrs = renderOpts.attrs;
-      var props = getFormProps(params, renderOpts);
+      var props = getFormItemProps(params, renderOpts);
       var labelProp = optionProps.label || 'label';
       var valueProp = optionProps.value || 'value';
       var disabledProp = optionProps.disabled || 'disabled';
@@ -619,7 +651,7 @@
         var data = params.data,
             property = params.property;
         var attrs = renderOpts.attrs;
-        var props = getFormProps(params, renderOpts);
+        var props = getFormItemProps(params, renderOpts);
 
         if (optionGroups) {
           var groupOptions = optionGroupProps.options || 'options';
@@ -732,6 +764,16 @@
     },
     ACheckbox: {
       renderItem: createFormItemRadioAndCheckboxRender()
+    },
+    AButton: {
+      renderEdit: defaultButtonEditRender,
+      renderDefault: defaultButtonEditRender,
+      renderItem: defaultButtonItemRender
+    },
+    AButtons: {
+      renderEdit: defaultButtonsEditRender,
+      renderDefault: defaultButtonsEditRender,
+      renderItem: defaultButtonsItemRender
     }
   };
   /**
