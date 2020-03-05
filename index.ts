@@ -78,7 +78,7 @@ function getSelectCellValue (renderOpts: any, params: any) {
     } : (value: any) => {
       let selectItem = XEUtils.find(options, (item: any) => item[valueProp] === value)
       return selectItem ? selectItem[labelProp] : value
-    }).join(';')
+    }).join(', ')
   }
   return null
 }
