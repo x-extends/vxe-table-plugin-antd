@@ -366,7 +366,7 @@
       attrs: attrs,
       props: props,
       on: getFormEvents(renderOpts, params)
-    }, cellText(h, props.content))];
+    }, cellText(h, renderOpts.content || props.content))];
   }
 
   function defaultButtonsItemRender(h, renderOpts, params) {
