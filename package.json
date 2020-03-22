@@ -1,6 +1,6 @@
 {
   "name": "vxe-table-plugin-antd",
-  "version": "1.7.2",
+  "version": "1.8.0-alpha.0",
   "description": "基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库",
   "scripts": {
     "lib": "gulp build"
@@ -46,11 +46,12 @@
     "gulp-typescript": "^5.0.1",
     "gulp-uglify": "^3.0.2",
     "markdown-doctest": "^0.9.1",
+    "moment": "^2.24.0",
     "prettier": "^1.18.2",
-    "typescript": "^3.6.3",
-    "vue": "^2.6.10",
-    "vxe-table": "^2.8.18",
-    "xe-utils": "^2.4.1"
+    "typescript": "^3.8.3",
+    "vue": "^2.6.11",
+    "vxe-table": "^2.8.31-alpha.3",
+    "xe-utils": "^2.4.2"
   },
   "peerDependencies": {
     "ant-design-vue": ">=1.0.0",
