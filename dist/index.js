@@ -23,6 +23,7 @@
 
   function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+  /* eslint-enable no-unused-vars */
   function isEmptyValue(cellValue) {
     return cellValue === null || cellValue === undefined || cellValue === '';
   }
@@ -786,14 +787,6 @@
     }
   };
   _exports.VXETablePluginAntd = VXETablePluginAntd;
-
-  function toMomentString(cellValue, format) {
-    return cellValue ? cellValue.format(format) : '';
-  }
-
-  _xeUtils["default"].mixin({
-    toMomentString: toMomentString
-  });
 
   if (typeof window !== 'undefined' && window.VXETable) {
     window.VXETable.use(VXETablePluginAntd);
