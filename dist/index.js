@@ -739,7 +739,7 @@
     var target = evnt.target;
 
     while (target && target.nodeType && target !== document) {
-      if (className && target.className && target.className.split(' ').indexOf(className) > -1) {
+      if (className && target.className && target.className.split && target.className.split(' ').indexOf(className) > -1) {
         targetElem = target;
       } else if (target === container) {
         return {
