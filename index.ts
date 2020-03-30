@@ -41,6 +41,10 @@ function getModelEvent (renderOpts: RenderOptions) {
     case 'AInput':
       type = 'change.value'
       break
+    case 'ARadio':
+    case 'ACheckbox':
+      type = 'input'
+      break
   }
   return type
 }
