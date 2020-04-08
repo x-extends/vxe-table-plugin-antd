@@ -776,8 +776,9 @@
    */
 
 
-  function handleClearEvent(params, evnt) {
+  function handleClearEvent(params, e) {
     var bodyElem = document.body;
+    var evnt = params.$event || e;
 
     if ( // 下拉框
     getEventTargetNode(evnt, bodyElem, 'ant-select-dropdown').flag || // 级联
