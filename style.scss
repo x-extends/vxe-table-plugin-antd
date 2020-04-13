@@ -20,6 +20,9 @@ $vxe-table-validate-error-color: #f56c6c;
     @extend %CompWidth;
   }
 }
+.vxe-table--filter-antd-wrapper {
+  padding: 0.8em 1em;
+}
 .vxe-table--filter-body {
   & > .ant-input,
   & > .ant-input-number,

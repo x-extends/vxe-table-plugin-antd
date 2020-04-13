@@ -31,6 +31,9 @@
 .vxe-tree-cell > .ant-time-picker {
   width: 100%; }
 
+.vxe-table--filter-antd-wrapper {
+  padding: 0.8em 1em; }
+
 .vxe-table--filter-body > .ant-input,
 .vxe-table--filter-body > .ant-input-number,
 .vxe-table--filter-body > .ant-select,
