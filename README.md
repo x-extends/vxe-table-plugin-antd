@@ -16,13 +16,11 @@ npm install xe-utils vxe-table vxe-table-plugin-antd ant-design-vue
 ```
 
 ```javascript
-import Vue from 'vue'
-import VXETable from 'vxe-table'
+// ...
 import VXETablePluginAntd from 'vxe-table-plugin-antd'
-import 'vxe-table/lib/index.css'
 import 'vxe-table-plugin-antd/dist/style.css'
+// ...
 
-Vue.use(VXETable)
 VXETable.use(VXETablePluginAntd)
 ```
 
