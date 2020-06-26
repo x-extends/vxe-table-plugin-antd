@@ -60,7 +60,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xuliangzhan/vxe-table-plugin-antd.git"
+    "url": "git+https://github.com/x-extends/vxe-table-plugin-antd.git"
   },
   "keywords": [
     "vxe-table",
@@ -72,7 +72,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xuliangzhan/vxe-table-plugin-antd/issues"
+    "url": "https://github.com/x-extends/vxe-table-plugin-antd/issues"
   },
-  "homepage": "https://github.com/xuliangzhan/vxe-table-plugin-antd#readme"
+  "homepage": "https://github.com/x-extends/vxe-table-plugin-antd#readme"
 }
