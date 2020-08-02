@@ -346,17 +346,17 @@ function defaultButtonsItemRender (h: CreateElement, renderOpts: FormItemRenderO
   return renderOpts.children.map((childRenderOpts: FormItemRenderOptions) => defaultButtonItemRender(h, childRenderOpts, params)[0])
 }
 
-function createDatePickerExportMethod (defaultFormat: string, isEdit?: boolean) {
-  const renderProperty = isEdit ? 'editRender' : 'cellRender'
+function createDatePickerExportMethod (defaultFormat: string) {
   return function (params: ColumnExportCellRenderParams) {
-    return getDatePickerCellValue(params.column[renderProperty], params, defaultFormat)
+    const { column } = params
+    return getDatePickerCellValue(column.editRender || column.cellRender, params, defaultFormat)
   }
 }
 
-function createExportMethod (valueMethod: Function, isEdit?: boolean) {
-  const renderProperty = isEdit ? 'editRender' : 'cellRender'
+function createExportMethod (getExportCellValue: Function) {
   return function (params: ColumnExportCellRenderParams) {
-    return valueMethod(params.column[renderProperty], params)
+    const { column } = params
+    return getExportCellValue(column.editRender || column.cellRender, params)
   }
 }
 
@@ -564,8 +564,7 @@ const renderMap = {
         }, renderOptions(h, options, optionProps))
       ]
     },
-    cellExportMethod: createExportMethod(getSelectCellValue),
-    editCellExportMethod: createExportMethod(getSelectCellValue, true)
+    cellExportMethod: createExportMethod(getSelectCellValue)
   },
   ACascader: {
     renderEdit: createEditRender(),
@@ -573,22 +572,19 @@ const renderMap = {
       return cellText(h, getCascaderCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
-    cellExportMethod: createExportMethod(getCascaderCellValue),
-    editCellExportMethod: createExportMethod(getCascaderCellValue, true)
+    cellExportMethod: createExportMethod(getCascaderCellValue)
   },
   ADatePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM-DD'),
     renderItem: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD'),
-    editCellExportMethod: createDatePickerExportMethod('YYYY-MM-DD', true)
+    cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
   },
   AMonthPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM'),
     renderItem: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-MM'),
-    editCellExportMethod: createDatePickerExportMethod('YYYY-MM', true)
+    cellExportMethod: createDatePickerExportMethod('YYYY-MM')
   },
   ARangePicker: {
     renderEdit: createEditRender(),
@@ -596,22 +592,19 @@ const renderMap = {
       return cellText(h, getRangePickerCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
-    cellExportMethod: createExportMethod(getRangePickerCellValue),
-    editCellExportMethod: createExportMethod(getRangePickerCellValue, true)
+    cellExportMethod: createExportMethod(getRangePickerCellValue)
   },
   AWeekPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-WW周'),
     renderItem: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-WW周'),
-    editCellExportMethod: createDatePickerExportMethod('YYYY-WW周', true)
+    cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
   },
   ATimePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('HH:mm:ss'),
     renderItem: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('HH:mm:ss'),
-    editCellExportMethod: createDatePickerExportMethod('HH:mm:ss', true)
+    cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
   },
   ATreeSelect: {
     renderEdit: createEditRender(),
@@ -619,8 +612,7 @@ const renderMap = {
       return cellText(h, getTreeSelectCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
-    cellExportMethod: createExportMethod(getTreeSelectCellValue),
-    editCellExportMethod: createExportMethod(getTreeSelectCellValue, true)
+    cellExportMethod: createExportMethod(getTreeSelectCellValue)
   },
   ARate: {
     renderDefault: createEditRender(),
