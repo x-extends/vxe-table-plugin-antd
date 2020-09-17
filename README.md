@@ -3,8 +3,6 @@
 [![gitee star](https://gitee.com/xuliangzhan_admin/vxe-table-plugin-antd/badge/star.svg?theme=dark)](https://gitee.com/xuliangzhan_admin/vxe-table-plugin-antd/stargazers)
 [![npm version](https://img.shields.io/npm/v/vxe-table-plugin-antd.svg?style=flat-square)](https://www.npmjs.com/package/vxe-table-plugin-antd)
 [![npm downloads](https://img.shields.io/npm/dm/vxe-table-plugin-antd.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vxe-table-plugin-antd)
-[![gzip size: JS](http://img.badgesize.io/https://unpkg.com/vxe-table-plugin-antd/dist/index.umd.min.js?compression=gzip&label=gzip%20size:%20JS)](https://unpkg.com/vxe-table-plugin-antd/dist/index.umd.min.js)
-[![gzip size: CSS](http://img.badgesize.io/https://unpkg.com/vxe-table-plugin-antd/dist/style.min.css?compression=gzip&label=gzip%20size:%20CSS)](https://unpkg.com/vxe-table-plugin-antd/dist/style.min.css)
 [![npm license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 基于 [vxe-table](https://www.npmjs.com/package/vxe-table) 表格的适配插件，用于兼容 [ant-design-vue](https://www.npmjs.com/package/ant-design-vue) 组件库
