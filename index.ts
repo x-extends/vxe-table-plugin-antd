@@ -396,7 +396,8 @@ const renderMap = {
     renderEdit: createEditRender(),
     renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender()
   },
   AInput: {
     autofocus: 'input.ant-input',
@@ -404,7 +405,8 @@ const renderMap = {
     renderEdit: createEditRender(),
     renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender()
   },
   AInputNumber: {
     autofocus: 'input.ant-input-number-input',
@@ -412,7 +414,8 @@ const renderMap = {
     renderEdit: createEditRender(),
     renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender()
   },
   ASelect: {
     renderEdit (h: CreateElement, renderOpts: ColumnEditRenderOptions, params: ColumnEditRenderParams) {
@@ -562,6 +565,45 @@ const renderMap = {
         }, renderOptions(h, options, optionProps))
       ]
     },
+    renderItemContent (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
+      const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+      const { data, property } = params
+      const { attrs } = renderOpts
+      const itemValue = XEUtils.get(data, property)
+      const props = getItemProps(renderOpts, params, itemValue)
+      const on = getItemOns(renderOpts, params)
+      const nativeOn = getNativeOns(renderOpts, params)
+      if (optionGroups) {
+        const groupOptions = optionGroupProps.options || 'options'
+        const groupLabel = optionGroupProps.label || 'label'
+        return [
+          h('a-select', {
+            attrs,
+            props,
+            on,
+            nativeOn
+          }, XEUtils.map(optionGroups, (group, gIndex) => {
+            return h('a-select-opt-group', {
+              key: gIndex
+            }, [
+              h('span', {
+                slot: 'label'
+              }, group[groupLabel])
+            ].concat(
+              renderOptions(h, group[groupOptions], optionProps)
+            ))
+          }))
+        ]
+      }
+      return [
+        h('a-select', {
+          attrs,
+          props,
+          on,
+          nativeOn
+        }, renderOptions(h, options, optionProps))
+      ]
+    },
     cellExportMethod: createExportMethod(getSelectCellValue)
   },
   ACascader: {
@@ -570,18 +612,21 @@ const renderMap = {
       return cellText(h, getCascaderCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createExportMethod(getCascaderCellValue)
   },
   ADatePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM-DD'),
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
   },
   AMonthPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-MM'),
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createDatePickerExportMethod('YYYY-MM')
   },
   ARangePicker: {
@@ -590,18 +635,21 @@ const renderMap = {
       return cellText(h, getRangePickerCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createExportMethod(getRangePickerCellValue)
   },
   AWeekPicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('YYYY-WW周'),
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
   },
   ATimePicker: {
     renderEdit: createEditRender(),
     renderCell: formatDatePicker('HH:mm:ss'),
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
   },
   ATreeSelect: {
@@ -610,6 +658,7 @@ const renderMap = {
       return cellText(h, getTreeSelectCellValue(renderOpts, params))
     },
     renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender(),
     cellExportMethod: createExportMethod(getTreeSelectCellValue)
   },
   ARate: {
@@ -617,7 +666,8 @@ const renderMap = {
     renderEdit: createEditRender(),
     renderFilter: createFilterRender(),
     filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender()
   },
   ASwitch: {
     renderDefault: createEditRender(),
@@ -645,23 +695,28 @@ const renderMap = {
       ]
     },
     filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender()
+    renderItem: createFormItemRender(),
+    renderItemContent: createFormItemRender()
   },
   ARadio: {
-    renderItem: createFormItemRadioAndCheckboxRender()
+    renderItem: createFormItemRadioAndCheckboxRender(),
+    renderItemContent: createFormItemRadioAndCheckboxRender()
   },
   ACheckbox: {
-    renderItem: createFormItemRadioAndCheckboxRender()
+    renderItem: createFormItemRadioAndCheckboxRender(),
+    renderItemContent: createFormItemRadioAndCheckboxRender()
   },
   AButton: {
     renderEdit: defaultButtonEditRender,
     renderDefault: defaultButtonEditRender,
-    renderItem: defaultButtonItemRender
+    renderItem: defaultButtonItemRender,
+    renderItemContent: defaultButtonItemRender
   },
   AButtons: {
     renderEdit: defaultButtonsEditRender,
     renderDefault: defaultButtonsEditRender,
-    renderItem: defaultButtonsItemRender
+    renderItem: defaultButtonsItemRender,
+    renderItemContent: defaultButtonsItemRender
   }
 }
 
