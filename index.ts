@@ -194,7 +194,7 @@ function getRangePickerCellValue (renderOpts: RenderOptions, params: ColumnCellR
   const { props = {} } = renderOpts
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.property)
-  if (cellValue) {
+  if (XEUtils.isArray(cellValue)) {
     cellValue = XEUtils.map(cellValue, (date) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
   }
   return cellValue
@@ -207,7 +207,7 @@ function getTreeSelectCellValue (renderOpts: RenderOptions, params: ColumnCellRe
   let cellValue = XEUtils.get(row, column.property)
   if (!isEmptyValue(cellValue)) {
     return XEUtils.map(treeCheckable ? cellValue : [cellValue], (value) => {
-      const matchObj = XEUtils.findTree(treeData, (item) => item.value === value, { children: 'children' })
+      const matchObj = XEUtils.findTree(treeData as any[], (item) => item.value === value, { children: 'children' })
       return matchObj ? matchObj.item.title : value
     }).join(', ')
   }
