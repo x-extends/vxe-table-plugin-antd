@@ -19,7 +19,7 @@ import {
   ColumnFilterMethodParams,
   ColumnExportCellRenderParams,
   FormItemRenderParams
-} from 'vxe-table/lib/vxe-table'
+} from 'vxe-table'
 /* eslint-enable no-unused-vars */
 
 function isEmptyValue (cellValue: any) {
@@ -765,6 +765,7 @@ export const VXETablePluginAntd = {
     renderer.mixin(renderMap)
     interceptor.add('event.clearFilter', handleClearEvent)
     interceptor.add('event.clearActived', handleClearEvent)
+    interceptor.add('event.clearAreas', handleClearEvent)
   }
 }
 
