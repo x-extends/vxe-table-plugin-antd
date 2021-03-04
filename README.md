@@ -84,8 +84,6 @@ VXETable.use(VXETablePluginAntd)
   height="600"
   :data="tableData"
   :edit-config="{trigger: 'click', mode: 'cell'}">
-  <vxe-table-column type="selection" width="60"></vxe-table-column>
-  <vxe-table-column type="index" title="Number" width="80"></vxe-table-column>
   <vxe-table-column field="name" title="AInput" min-width="140" :edit-render="{name: 'AInput'}"></vxe-table-column>
   <vxe-table-column field="age" title="AInputNumber" width="160" :edit-render="{name: 'AInputNumber', props: {max: 35, min: 18}}"></vxe-table-column>
   <vxe-table-column field="sex" title="ASelect" width="140" :edit-render="{name: 'ASelect', options: sexList}"></vxe-table-column>
@@ -127,7 +125,6 @@ export default defineComponent({
   border
   height="600"
   :data="tableData">
-  <vxe-table-column type="index" width="60"></vxe-table-column>
   <vxe-table-column field="name" title="Name"></vxe-table-column>
   <vxe-table-column field="age" title="Age"></vxe-table-column>
   <vxe-table-column field="date" title="Date" :filters="[{data: []}]" :filter-render="{name: 'AInput'}"></vxe-table-column>

@@ -155,7 +155,7 @@ function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: 
   return null
 }
 
-function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params:  VxeGlobalRendererHandles.RenderCellParams) {
+function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params:  VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
   const { props = {} } = renderOpts
   const { row, column } = params
   const cellValue = XEUtils.get(row, column.property)
@@ -165,7 +165,7 @@ function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOption
   return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `)
 }
 
-function getRangePickerCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams) {
+function getRangePickerCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.RenderEditParams) {
   const { props = {} } = renderOpts
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.property)
@@ -175,7 +175,7 @@ function getRangePickerCellValue (renderOpts: VxeColumnPropTypes.EditRender, par
   return cellValue
 }
 
-function getTreeSelectCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams) {
+function getTreeSelectCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.RenderEditParams) {
   const { props = {} } = renderOpts
   const { treeData, treeCheckable } = props
   const { row, column } = params
