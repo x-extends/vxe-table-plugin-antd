@@ -262,7 +262,7 @@ function createFilterRender (defaultProps?: { [key: string]: any }) {
     const { name, attrs } = renderOpts
     return [
       h('div', {
-        class: 'vxe-table--filter-iview-wrapper'
+        class: 'vxe-table--filter-antd-wrapper'
       }, column.filters.map((option, oIndex) => {
         const optionValue = option.data
         return h(name, {
@@ -285,7 +285,22 @@ function handleConfirmFilter (params: ColumnFilterRenderParams, checked: boolean
   $panel.changeOption({}, checked, option)
 }
 
-function defaultFilterMethod (params: ColumnFilterMethodParams) {
+/**
+ * 模糊匹配
+ * @param params
+ */
+function defaultFuzzyFilterMethod (params: ColumnFilterMethodParams) {
+  const { option, row, column } = params
+  const { data } = option
+  const cellValue = XEUtils.get(row, column.property)
+  return XEUtils.toString(cellValue).indexOf(data) > -1
+}
+
+/**
+ * 精确匹配
+ * @param params
+ */
+function defaultExactFilterMethod (params: ColumnFilterMethodParams) {
   const { option, row, column } = params
   const { data } = option
   const cellValue = XEUtils.get(row, column.property)
@@ -387,340 +402,6 @@ function createFormItemRadioAndCheckboxRender () {
 }
 
 /**
- * 渲染函数
- */
-const renderMap = {
-  AAutoComplete: {
-    autofocus: 'input.ant-input',
-    renderDefault: createEditRender(),
-    renderEdit: createEditRender(),
-    renderFilter: createFilterRender(),
-    filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender()
-  },
-  AInput: {
-    autofocus: 'input.ant-input',
-    renderDefault: createEditRender(),
-    renderEdit: createEditRender(),
-    renderFilter: createFilterRender(),
-    filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender()
-  },
-  AInputNumber: {
-    autofocus: 'input.ant-input-number-input',
-    renderDefault: createEditRender(),
-    renderEdit: createEditRender(),
-    renderFilter: createFilterRender(),
-    filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender()
-  },
-  ASelect: {
-    renderEdit (h: CreateElement, renderOpts: ColumnEditRenderOptions, params: ColumnEditRenderParams) {
-      const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
-      const { row, column } = params
-      const { attrs } = renderOpts
-      const cellValue = XEUtils.get(row, column.property)
-      const props = getCellEditFilterProps(renderOpts, params, cellValue)
-      const on = getEditOns(renderOpts, params)
-      const nativeOn = getNativeOns(renderOpts, params)
-      if (optionGroups) {
-        const groupOptions = optionGroupProps.options || 'options'
-        const groupLabel = optionGroupProps.label || 'label'
-        return [
-          h('a-select', {
-            props,
-            attrs,
-            on,
-            nativeOn
-          }, XEUtils.map(optionGroups, (group, gIndex) => {
-            return h('a-select-opt-group', {
-              key: gIndex
-            }, [
-              h('span', {
-                slot: 'label'
-              }, group[groupLabel])
-            ].concat(
-              renderOptions(h, group[groupOptions], optionProps)
-            ))
-          }))
-        ]
-      }
-      return [
-        h('a-select', {
-          props,
-          attrs,
-          on,
-          nativeOn
-        }, renderOptions(h, options, optionProps))
-      ]
-    },
-    renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnCellRenderParams) {
-      return cellText(h, getSelectCellValue(renderOpts, params))
-    },
-    renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
-      const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
-      const groupOptions = optionGroupProps.options || 'options'
-      const groupLabel = optionGroupProps.label || 'label'
-      const { column } = params
-      const { attrs } = renderOpts
-      const nativeOn = getNativeOns(renderOpts, params)
-      return [
-        h('div', {
-          class: 'vxe-table--filter-iview-wrapper'
-        }, optionGroups
-          ? column.filters.map((option, oIndex) => {
-            const optionValue = option.data
-            const props = getCellEditFilterProps(renderOpts, params, optionValue)
-            return h('a-select', {
-              key: oIndex,
-              attrs,
-              props,
-              on: getFilterOns(renderOpts, params, option, () => {
-                // 处理 change 事件相关逻辑
-                handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-              }),
-              nativeOn
-            }, XEUtils.map(optionGroups, (group, gIndex) => {
-              return h('a-select-opt-group', {
-                key: gIndex
-              }, [
-                h('span', {
-                  slot: 'label'
-                }, group[groupLabel])
-              ].concat(
-                renderOptions(h, group[groupOptions], optionProps)
-              ))
-            }))
-          })
-          : column.filters.map((option, oIndex) => {
-            const optionValue = option.data
-            const props = getCellEditFilterProps(renderOpts, params, optionValue)
-            return h('a-select', {
-              key: oIndex,
-              attrs,
-              props,
-              on: getFilterOns(renderOpts, params, option, () => {
-                // 处理 change 事件相关逻辑
-                handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-              }),
-              nativeOn
-            }, renderOptions(h, options, optionProps))
-          }))
-      ]
-    },
-    filterMethod (params: ColumnFilterMethodParams) {
-      const { option, row, column } = params
-      const { data } = option
-      const { property, filterRender: renderOpts } = column
-      const { props = {} } = renderOpts
-      const cellValue = XEUtils.get(row, property)
-      if (props.mode === 'multiple') {
-        if (XEUtils.isArray(cellValue)) {
-          return XEUtils.includeArrays(cellValue, data)
-        }
-        return data.indexOf(cellValue) > -1
-      }
-      /* eslint-disable eqeqeq */
-      return cellValue == data
-    },
-    renderItem (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
-      const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
-      const { data, property } = params
-      const { attrs } = renderOpts
-      const itemValue = XEUtils.get(data, property)
-      const props = getItemProps(renderOpts, params, itemValue)
-      const on = getItemOns(renderOpts, params)
-      const nativeOn = getNativeOns(renderOpts, params)
-      if (optionGroups) {
-        const groupOptions = optionGroupProps.options || 'options'
-        const groupLabel = optionGroupProps.label || 'label'
-        return [
-          h('a-select', {
-            attrs,
-            props,
-            on,
-            nativeOn
-          }, XEUtils.map(optionGroups, (group, gIndex) => {
-            return h('a-select-opt-group', {
-              key: gIndex
-            }, [
-              h('span', {
-                slot: 'label'
-              }, group[groupLabel])
-            ].concat(
-              renderOptions(h, group[groupOptions], optionProps)
-            ))
-          }))
-        ]
-      }
-      return [
-        h('a-select', {
-          attrs,
-          props,
-          on,
-          nativeOn
-        }, renderOptions(h, options, optionProps))
-      ]
-    },
-    renderItemContent (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
-      const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
-      const { data, property } = params
-      const { attrs } = renderOpts
-      const itemValue = XEUtils.get(data, property)
-      const props = getItemProps(renderOpts, params, itemValue)
-      const on = getItemOns(renderOpts, params)
-      const nativeOn = getNativeOns(renderOpts, params)
-      if (optionGroups) {
-        const groupOptions = optionGroupProps.options || 'options'
-        const groupLabel = optionGroupProps.label || 'label'
-        return [
-          h('a-select', {
-            attrs,
-            props,
-            on,
-            nativeOn
-          }, XEUtils.map(optionGroups, (group, gIndex) => {
-            return h('a-select-opt-group', {
-              key: gIndex
-            }, [
-              h('span', {
-                slot: 'label'
-              }, group[groupLabel])
-            ].concat(
-              renderOptions(h, group[groupOptions], optionProps)
-            ))
-          }))
-        ]
-      }
-      return [
-        h('a-select', {
-          attrs,
-          props,
-          on,
-          nativeOn
-        }, renderOptions(h, options, optionProps))
-      ]
-    },
-    cellExportMethod: createExportMethod(getSelectCellValue)
-  },
-  ACascader: {
-    renderEdit: createEditRender(),
-    renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
-      return cellText(h, getCascaderCellValue(renderOpts, params))
-    },
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createExportMethod(getCascaderCellValue)
-  },
-  ADatePicker: {
-    renderEdit: createEditRender(),
-    renderCell: formatDatePicker('YYYY-MM-DD'),
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
-  },
-  AMonthPicker: {
-    renderEdit: createEditRender(),
-    renderCell: formatDatePicker('YYYY-MM'),
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-MM')
-  },
-  ARangePicker: {
-    renderEdit: createEditRender(),
-    renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
-      return cellText(h, getRangePickerCellValue(renderOpts, params))
-    },
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createExportMethod(getRangePickerCellValue)
-  },
-  AWeekPicker: {
-    renderEdit: createEditRender(),
-    renderCell: formatDatePicker('YYYY-WW周'),
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
-  },
-  ATimePicker: {
-    renderEdit: createEditRender(),
-    renderCell: formatDatePicker('HH:mm:ss'),
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
-  },
-  ATreeSelect: {
-    renderEdit: createEditRender(),
-    renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
-      return cellText(h, getTreeSelectCellValue(renderOpts, params))
-    },
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender(),
-    cellExportMethod: createExportMethod(getTreeSelectCellValue)
-  },
-  ARate: {
-    renderDefault: createEditRender(),
-    renderEdit: createEditRender(),
-    renderFilter: createFilterRender(),
-    filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender()
-  },
-  ASwitch: {
-    renderDefault: createEditRender(),
-    renderEdit: createEditRender(),
-    renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
-      const { column } = params
-      const { name, attrs } = renderOpts
-      const nativeOn = getNativeOns(renderOpts, params)
-      return [
-        h('div', {
-          class: 'vxe-table--filter-iview-wrapper'
-        }, column.filters.map((option, oIndex) => {
-          const optionValue = option.data
-          return h(name, {
-            key: oIndex,
-            attrs,
-            props: getCellEditFilterProps(renderOpts, params, optionValue),
-            on: getFilterOns(renderOpts, params, option, () => {
-              // 处理 change 事件相关逻辑
-              handleConfirmFilter(params, XEUtils.isBoolean(option.data), option)
-            }),
-            nativeOn
-          })
-        }))
-      ]
-    },
-    filterMethod: defaultFilterMethod,
-    renderItem: createFormItemRender(),
-    renderItemContent: createFormItemRender()
-  },
-  ARadio: {
-    renderItem: createFormItemRadioAndCheckboxRender(),
-    renderItemContent: createFormItemRadioAndCheckboxRender()
-  },
-  ACheckbox: {
-    renderItem: createFormItemRadioAndCheckboxRender(),
-    renderItemContent: createFormItemRadioAndCheckboxRender()
-  },
-  AButton: {
-    renderEdit: defaultButtonEditRender,
-    renderDefault: defaultButtonEditRender,
-    renderItem: defaultButtonItemRender,
-    renderItemContent: defaultButtonItemRender
-  },
-  AButtons: {
-    renderEdit: defaultButtonsEditRender,
-    renderDefault: defaultButtonsEditRender,
-    renderItem: defaultButtonsItemRender,
-    renderItemContent: defaultButtonsItemRender
-  }
-}
-
-/**
  * 检查触发源是否属于目标节点
  */
 function getEventTargetNode (evnt: any, container: HTMLElement, className: string) {
@@ -762,7 +443,337 @@ function handleClearEvent (params: InterceptorParams, e: any) {
  */
 export const VXETablePluginAntd = {
   install ({ interceptor, renderer }: typeof VXETable) {
-    renderer.mixin(renderMap)
+    renderer.mixin({
+      AAutoComplete: {
+        autofocus: 'input.ant-input',
+        renderDefault: createEditRender(),
+        renderEdit: createEditRender(),
+        renderFilter: createFilterRender(),
+        filterMethod: defaultExactFilterMethod,
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender()
+      },
+      AInput: {
+        autofocus: 'input.ant-input',
+        renderDefault: createEditRender(),
+        renderEdit: createEditRender(),
+        renderFilter: createFilterRender(),
+        filterMethod: defaultFuzzyFilterMethod,
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender()
+      },
+      AInputNumber: {
+        autofocus: 'input.ant-input-number-input',
+        renderDefault: createEditRender(),
+        renderEdit: createEditRender(),
+        renderFilter: createFilterRender(),
+        filterMethod: defaultFuzzyFilterMethod,
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender()
+      },
+      ASelect: {
+        renderEdit (h: CreateElement, renderOpts: ColumnEditRenderOptions, params: ColumnEditRenderParams) {
+          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { row, column } = params
+          const { attrs } = renderOpts
+          const cellValue = XEUtils.get(row, column.property)
+          const props = getCellEditFilterProps(renderOpts, params, cellValue)
+          const on = getEditOns(renderOpts, params)
+          const nativeOn = getNativeOns(renderOpts, params)
+          if (optionGroups) {
+            const groupOptions = optionGroupProps.options || 'options'
+            const groupLabel = optionGroupProps.label || 'label'
+            return [
+              h('a-select', {
+                props,
+                attrs,
+                on,
+                nativeOn
+              }, XEUtils.map(optionGroups, (group, gIndex) => {
+                return h('a-select-opt-group', {
+                  key: gIndex
+                }, [
+                  h('span', {
+                    slot: 'label'
+                  }, group[groupLabel])
+                ].concat(
+                  renderOptions(h, group[groupOptions], optionProps)
+                ))
+              }))
+            ]
+          }
+          return [
+            h('a-select', {
+              props,
+              attrs,
+              on,
+              nativeOn
+            }, renderOptions(h, options, optionProps))
+          ]
+        },
+        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnCellRenderParams) {
+          return cellText(h, getSelectCellValue(renderOpts, params))
+        },
+        renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
+          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const groupOptions = optionGroupProps.options || 'options'
+          const groupLabel = optionGroupProps.label || 'label'
+          const { column } = params
+          const { attrs } = renderOpts
+          const nativeOn = getNativeOns(renderOpts, params)
+          return [
+            h('div', {
+              class: 'vxe-table--filter-antd-wrapper'
+            }, optionGroups
+              ? column.filters.map((option, oIndex) => {
+                const optionValue = option.data
+                const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                return h('a-select', {
+                  key: oIndex,
+                  attrs,
+                  props,
+                  on: getFilterOns(renderOpts, params, option, () => {
+                    // 处理 change 事件相关逻辑
+                    handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                  }),
+                  nativeOn
+                }, XEUtils.map(optionGroups, (group, gIndex) => {
+                  return h('a-select-opt-group', {
+                    key: gIndex
+                  }, [
+                    h('span', {
+                      slot: 'label'
+                    }, group[groupLabel])
+                  ].concat(
+                    renderOptions(h, group[groupOptions], optionProps)
+                  ))
+                }))
+              })
+              : column.filters.map((option, oIndex) => {
+                const optionValue = option.data
+                const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                return h('a-select', {
+                  key: oIndex,
+                  attrs,
+                  props,
+                  on: getFilterOns(renderOpts, params, option, () => {
+                    // 处理 change 事件相关逻辑
+                    handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                  }),
+                  nativeOn
+                }, renderOptions(h, options, optionProps))
+              }))
+          ]
+        },
+        filterMethod (params: ColumnFilterMethodParams) {
+          const { option, row, column } = params
+          const { data } = option
+          const { property, filterRender: renderOpts } = column
+          const { props = {} } = renderOpts
+          const cellValue = XEUtils.get(row, property)
+          if (props.mode === 'multiple') {
+            if (XEUtils.isArray(cellValue)) {
+              return XEUtils.includeArrays(cellValue, data)
+            }
+            return data.indexOf(cellValue) > -1
+          }
+          /* eslint-disable eqeqeq */
+          return cellValue == data
+        },
+        renderItem (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
+          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { data, property } = params
+          const { attrs } = renderOpts
+          const itemValue = XEUtils.get(data, property)
+          const props = getItemProps(renderOpts, params, itemValue)
+          const on = getItemOns(renderOpts, params)
+          const nativeOn = getNativeOns(renderOpts, params)
+          if (optionGroups) {
+            const groupOptions = optionGroupProps.options || 'options'
+            const groupLabel = optionGroupProps.label || 'label'
+            return [
+              h('a-select', {
+                attrs,
+                props,
+                on,
+                nativeOn
+              }, XEUtils.map(optionGroups, (group, gIndex) => {
+                return h('a-select-opt-group', {
+                  key: gIndex
+                }, [
+                  h('span', {
+                    slot: 'label'
+                  }, group[groupLabel])
+                ].concat(
+                  renderOptions(h, group[groupOptions], optionProps)
+                ))
+              }))
+            ]
+          }
+          return [
+            h('a-select', {
+              attrs,
+              props,
+              on,
+              nativeOn
+            }, renderOptions(h, options, optionProps))
+          ]
+        },
+        renderItemContent (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
+          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { data, property } = params
+          const { attrs } = renderOpts
+          const itemValue = XEUtils.get(data, property)
+          const props = getItemProps(renderOpts, params, itemValue)
+          const on = getItemOns(renderOpts, params)
+          const nativeOn = getNativeOns(renderOpts, params)
+          if (optionGroups) {
+            const groupOptions = optionGroupProps.options || 'options'
+            const groupLabel = optionGroupProps.label || 'label'
+            return [
+              h('a-select', {
+                attrs,
+                props,
+                on,
+                nativeOn
+              }, XEUtils.map(optionGroups, (group, gIndex) => {
+                return h('a-select-opt-group', {
+                  key: gIndex
+                }, [
+                  h('span', {
+                    slot: 'label'
+                  }, group[groupLabel])
+                ].concat(
+                  renderOptions(h, group[groupOptions], optionProps)
+                ))
+              }))
+            ]
+          }
+          return [
+            h('a-select', {
+              attrs,
+              props,
+              on,
+              nativeOn
+            }, renderOptions(h, options, optionProps))
+          ]
+        },
+        cellExportMethod: createExportMethod(getSelectCellValue)
+      },
+      ACascader: {
+        renderEdit: createEditRender(),
+        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+          return cellText(h, getCascaderCellValue(renderOpts, params))
+        },
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createExportMethod(getCascaderCellValue)
+      },
+      ADatePicker: {
+        renderEdit: createEditRender(),
+        renderCell: formatDatePicker('YYYY-MM-DD'),
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
+      },
+      AMonthPicker: {
+        renderEdit: createEditRender(),
+        renderCell: formatDatePicker('YYYY-MM'),
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createDatePickerExportMethod('YYYY-MM')
+      },
+      ARangePicker: {
+        renderEdit: createEditRender(),
+        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+          return cellText(h, getRangePickerCellValue(renderOpts, params))
+        },
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createExportMethod(getRangePickerCellValue)
+      },
+      AWeekPicker: {
+        renderEdit: createEditRender(),
+        renderCell: formatDatePicker('YYYY-WW周'),
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
+      },
+      ATimePicker: {
+        renderEdit: createEditRender(),
+        renderCell: formatDatePicker('HH:mm:ss'),
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
+      },
+      ATreeSelect: {
+        renderEdit: createEditRender(),
+        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+          return cellText(h, getTreeSelectCellValue(renderOpts, params))
+        },
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender(),
+        cellExportMethod: createExportMethod(getTreeSelectCellValue)
+      },
+      ARate: {
+        renderDefault: createEditRender(),
+        renderEdit: createEditRender(),
+        renderFilter: createFilterRender(),
+        filterMethod: defaultExactFilterMethod,
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender()
+      },
+      ASwitch: {
+        renderDefault: createEditRender(),
+        renderEdit: createEditRender(),
+        renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
+          const { column } = params
+          const { name, attrs } = renderOpts
+          const nativeOn = getNativeOns(renderOpts, params)
+          return [
+            h('div', {
+              class: 'vxe-table--filter-antd-wrapper'
+            }, column.filters.map((option, oIndex) => {
+              const optionValue = option.data
+              return h(name, {
+                key: oIndex,
+                attrs,
+                props: getCellEditFilterProps(renderOpts, params, optionValue),
+                on: getFilterOns(renderOpts, params, option, () => {
+                  // 处理 change 事件相关逻辑
+                  handleConfirmFilter(params, XEUtils.isBoolean(option.data), option)
+                }),
+                nativeOn
+              })
+            }))
+          ]
+        },
+        filterMethod: defaultExactFilterMethod,
+        renderItem: createFormItemRender(),
+        renderItemContent: createFormItemRender()
+      },
+      ARadio: {
+        renderItem: createFormItemRadioAndCheckboxRender(),
+        renderItemContent: createFormItemRadioAndCheckboxRender()
+      },
+      ACheckbox: {
+        renderItem: createFormItemRadioAndCheckboxRender(),
+        renderItemContent: createFormItemRadioAndCheckboxRender()
+      },
+      AButton: {
+        renderEdit: defaultButtonEditRender,
+        renderDefault: defaultButtonEditRender,
+        renderItem: defaultButtonItemRender,
+        renderItemContent: defaultButtonItemRender
+      },
+      AButtons: {
+        renderEdit: defaultButtonsEditRender,
+        renderDefault: defaultButtonsEditRender,
+        renderItem: defaultButtonsItemRender,
+        renderItemContent: defaultButtonsItemRender
+      }
+    })
+
     interceptor.add('event.clearFilter', handleClearEvent)
     interceptor.add('event.clearActived', handleClearEvent)
     interceptor.add('event.clearAreas', handleClearEvent)
