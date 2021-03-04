@@ -100,38 +100,17 @@ export default {
   data () {
     return {
       tableData: [
-        {
-          id: 100,
-          name: 'test',
-          age: 26,
-          sex: '1',
-          region: ['shenzhen'],
-          date: null,
-          date1: null,
-          date2: null,
-          rate: 2,
-          flag: true
-        }
+        { id: 100, name: 'test0', age: 28, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true },
+        { id: 101, name: 'test1', age: 32, sex: '0', region: ['guangzhou'], date: null, date1: null, date2: null, rate: 2, flag: true },
+        { id: 102, name: 'test2', age: 36, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true }
       ],
       sexList: [
-        {
-          'label': '男',
-          'value': '1'
-        },
-        {
-          'label': '女',
-          'value': '0'
-        }
+        { label: '男', value: '1' },
+        { label: '女', value: '0' }
       ],
       regionList: [
-        {
-          'label': '深圳',
-          'value': 'shenzhen'
-        },
-        {
-          'label': '广州',
-          'value': 'guangzhou'
-        }
+        { label: '深圳', value: 'shenzhen' },
+        { label: '广州', value: 'guangzhou' }
       ]
     }
   }
@@ -157,12 +136,9 @@ export default {
   data () {
     return {
       tableData: [
-        {
-          id: 100,
-          name: 'test',
-          age: 26,
-          date: null
-        }
+        { id: 100, name: 'test0', age: 28, date: null },
+        { id: 101, name: 'test1', age: 32, date: null },
+        { id: 102, name: 'test2', age: 36, date: null }
       ]
     }
   }
