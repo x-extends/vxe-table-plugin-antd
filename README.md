@@ -5,12 +5,12 @@
 [![npm downloads](https://img.shields.io/npm/dm/vxe-table-plugin-antd.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vxe-table-plugin-antd)
 [![npm license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
-基于 [vxe-table](https://www.npmjs.com/package/vxe-table) 表格的适配插件，用于兼容 [ant-design-vue](https://www.npmjs.com/package/ant-design-vue) 组件库
+基于 [vxe-table](https://www.npmjs.com/package/vxe-table) 表格的适配插件，用于兼容 [ant-design-vue](https://github.com/vueComponent/ant-design-vue) 组件库
 
 ## Installing
 
 ```shell
-npm install xe-utils vxe-table vxe-table-plugin-antd ant-design-vue
+npm install xe-utils vxe-table@next vxe-table-plugin-antd@next ant-design-vue@next
 ```
 
 ```javascript
@@ -96,46 +96,27 @@ VXETable.use(VXETablePluginAntd)
 ```
 
 ```javascript
-export default {
-  data () {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup () {
     return {
       tableData: [
-        {
-          id: 100,
-          name: 'test',
-          age: 26,
-          sex: '1',
-          region: ['shenzhen'],
-          date: null,
-          date1: null,
-          date2: null,
-          rate: 2,
-          flag: true
-        }
+        { id: 100, name: 'test0', age: 28, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true },
+        { id: 101, name: 'test1', age: 32, sex: '0', region: ['guangzhou'], date: null, date1: null, date2: null, rate: 2, flag: true },
+        { id: 102, name: 'test2', age: 36, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true }
       ],
       sexList: [
-        {
-          'label': '男',
-          'value': '1'
-        },
-        {
-          'label': '女',
-          'value': '0'
-        }
+        { label: '男', value: '1' },
+        { label: '女', value: '0' }
       ],
       regionList: [
-        {
-          'label': '深圳',
-          'value': 'shenzhen'
-        },
-        {
-          'label': '广州',
-          'value': 'guangzhou'
-        }
+        { label: '深圳', value: 'shenzhen' },
+        { label: '广州', value: 'guangzhou' }
       ]
     }
   }
-}
+})
 ```
 
 ## Filter demo
@@ -153,20 +134,19 @@ export default {
 ```
 
 ```javascript
-export default {
-  data () {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup () {
     return {
       tableData: [
-        {
-          id: 100,
-          name: 'test',
-          age: 26,
-          date: null
-        }
+        { id: 100, name: 'test0', age: 28, date: null },
+        { id: 101, name: 'test1', age: 32, date: null },
+        { id: 102, name: 'test2', age: 36, date: null }
       ]
     }
   }
-}
+})
 ```
 
 ## License
