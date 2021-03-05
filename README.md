@@ -1,6 +1,6 @@
 # vxe-table-plugin-antd
 
-[![gitee star](https://gitee.com/xuliangzhan_admin/vxe-table-plugin-antd/badge/star.svg?theme=dark)](https://gitee.com/xuliangzhan_admin/vxe-table-plugin-antd/stargazers)
+[![gitee star](https://gitee.com/x-extends/vxe-table-plugin-antd/badge/star.svg?theme=dark)](https://gitee.com/x-extends/vxe-table-plugin-antd/stargazers)
 [![npm version](https://img.shields.io/npm/v/vxe-table-plugin-antd.svg?style=flat-square)](https://www.npmjs.com/package/vxe-table-plugin-antd)
 [![npm downloads](https://img.shields.io/npm/dm/vxe-table-plugin-antd.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vxe-table-plugin-antd)
 [![npm license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
