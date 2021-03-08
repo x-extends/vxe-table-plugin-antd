@@ -1,7 +1,7 @@
 import { h, resolveComponent, ComponentOptions } from 'vue'
 import XEUtils from 'xe-utils/ctor'
 import {
-  VXETable,
+  VXETableCore,
   VxeTableDefines,
   VxeColumnPropTypes,
   VxeGlobalRendererHandles,
@@ -269,7 +269,7 @@ function defaultFuzzyFilterMethod (params: VxeGlobalRendererHandles.FilterMethod
   const { option, row, column } = params
   const { data } = option
   const cellValue = XEUtils.get(row, column.property)
-  return XEUtils.toString(cellValue).indexOf(data) > -1
+  return XEUtils.toValueString(cellValue).indexOf(data) > -1
 }
 
 /**
@@ -425,7 +425,9 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install ({ interceptor, renderer }: typeof VXETable) {
+  install (vxetablecore: VXETableCore) {
+    const { interceptor, renderer } = vxetablecore
+
     renderer.mixin({
       AAutoComplete: {
         autofocus: 'input.ant-input',
