@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { CreateElement } from 'vue'
-import XEUtils from 'xe-utils/ctor'
+import XEUtils from 'xe-utils'
 import {
   VXETable,
   RenderParams,
@@ -20,7 +19,6 @@ import {
   ColumnExportCellRenderParams,
   FormItemRenderParams
 } from 'vxe-table'
-/* eslint-enable no-unused-vars */
 
 function isEmptyValue (cellValue: any) {
   return cellValue === null || cellValue === undefined || cellValue === ''
@@ -472,7 +470,7 @@ export const VXETablePluginAntd = {
         renderItemContent: createFormItemRender()
       },
       ASelect: {
-        renderEdit (h: CreateElement, renderOpts: ColumnEditRenderOptions, params: ColumnEditRenderParams) {
+        renderEdit (h, renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
           const { row, column } = params
           const { attrs } = renderOpts
@@ -511,10 +509,10 @@ export const VXETablePluginAntd = {
             }, renderOptions(h, options, optionProps))
           ]
         },
-        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnCellRenderParams) {
+        renderCell (h, renderOpts, params) {
           return cellText(h, getSelectCellValue(renderOpts, params))
         },
-        renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
+        renderFilter (h, renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
           const groupOptions = optionGroupProps.options || 'options'
           const groupLabel = optionGroupProps.label || 'label'
@@ -565,7 +563,7 @@ export const VXETablePluginAntd = {
               }))
           ]
         },
-        filterMethod (params: ColumnFilterMethodParams) {
+        filterMethod (params) {
           const { option, row, column } = params
           const { data } = option
           const { property, filterRender: renderOpts } = column
@@ -619,7 +617,7 @@ export const VXETablePluginAntd = {
             }, renderOptions(h, options, optionProps))
           ]
         },
-        renderItemContent (h: CreateElement, renderOpts: FormItemRenderOptions, params: FormItemRenderParams) {
+        renderItemContent (h, renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
           const { data, property } = params
           const { attrs } = renderOpts
@@ -658,62 +656,70 @@ export const VXETablePluginAntd = {
             }, renderOptions(h, options, optionProps))
           ]
         },
-        cellExportMethod: createExportMethod(getSelectCellValue)
+        cellExportMethod: createExportMethod(getSelectCellValue),
+        exportMethod: createExportMethod(getSelectCellValue)
       },
       ACascader: {
         renderEdit: createEditRender(),
-        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+        renderCell (h, renderOpts, params) {
           return cellText(h, getCascaderCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createExportMethod(getCascaderCellValue)
+        cellExportMethod: createExportMethod(getCascaderCellValue),
+        exportMethod: createExportMethod(getCascaderCellValue)
       },
       ADatePicker: {
         renderEdit: createEditRender(),
         renderCell: formatDatePicker('YYYY-MM-DD'),
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
+        cellExportMethod: createDatePickerExportMethod('YYYY-MM-DD'),
+        exportMethod: createDatePickerExportMethod('YYYY-MM-DD')
       },
       AMonthPicker: {
         renderEdit: createEditRender(),
         renderCell: formatDatePicker('YYYY-MM'),
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createDatePickerExportMethod('YYYY-MM')
+        cellExportMethod: createDatePickerExportMethod('YYYY-MM'),
+        exportMethod: createDatePickerExportMethod('YYYY-MM')
       },
       ARangePicker: {
         renderEdit: createEditRender(),
-        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+        renderCell (h, renderOpts, params) {
           return cellText(h, getRangePickerCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createExportMethod(getRangePickerCellValue)
+        cellExportMethod: createExportMethod(getRangePickerCellValue),
+        exportMethod: createExportMethod(getRangePickerCellValue)
       },
       AWeekPicker: {
         renderEdit: createEditRender(),
         renderCell: formatDatePicker('YYYY-WW周'),
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createDatePickerExportMethod('YYYY-WW周')
+        cellExportMethod: createDatePickerExportMethod('YYYY-WW周'),
+        exportMethod: createDatePickerExportMethod('YYYY-WW周')
       },
       ATimePicker: {
         renderEdit: createEditRender(),
         renderCell: formatDatePicker('HH:mm:ss'),
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createDatePickerExportMethod('HH:mm:ss')
+        cellExportMethod: createDatePickerExportMethod('HH:mm:ss'),
+        exportMethod: createDatePickerExportMethod('HH:mm:ss')
       },
       ATreeSelect: {
         renderEdit: createEditRender(),
-        renderCell (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnEditRenderParams) {
+        renderCell (h, renderOpts, params) {
           return cellText(h, getTreeSelectCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
-        cellExportMethod: createExportMethod(getTreeSelectCellValue)
+        cellExportMethod: createExportMethod(getTreeSelectCellValue),
+        exportMethod: createExportMethod(getTreeSelectCellValue)
       },
       ARate: {
         renderDefault: createEditRender(),
@@ -726,7 +732,7 @@ export const VXETablePluginAntd = {
       ASwitch: {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
-        renderFilter (h: CreateElement, renderOpts: ColumnFilterRenderOptions, params: ColumnFilterRenderParams) {
+        renderFilter (h, renderOpts, params) {
           const { column } = params
           const { name, attrs } = renderOpts
           const nativeOn = getNativeOns(renderOpts, params)
