@@ -62,6 +62,23 @@ function getItemProps (renderOpts: RenderOptions, params: FormItemRenderParams, 
   return XEUtils.assign(vSize ? { size: vSize } : {}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
 }
 
+function formatText (cellValue: any) {
+  return '' + (isEmptyValue(cellValue) ? '' : cellValue)
+}
+
+function getCellLabelVNs (h: CreateElement, renderOpts: ColumnEditRenderOptions, params: ColumnEditRenderParams, cellLabel: any) {
+  const { placeholder } = renderOpts
+  return [
+    h('span', {
+      class: 'vxe-cell--label'
+    }, placeholder && isEmptyValue(cellLabel) ? [
+      h('span', {
+        class: 'vxe-cell--placeholder'
+      }, formatText(placeholder))
+    ] : formatText(cellLabel))
+  ]
+}
+
 function getNativeOns (renderOpts: RenderOptions, params: RenderParams) {
   const { nativeEvents } = renderOpts
   const nativeOns: { [type: string]: Function } = {}
@@ -149,7 +166,7 @@ function matchCascaderData (index: number, list: any[], values: any[], labels: a
 
 function formatDatePicker (defaultFormat: string) {
   return function (h: CreateElement, renderOpts: ColumnCellRenderOptions, params: ColumnCellRenderParams) {
-    return cellText(h, getDatePickerCellValue(renderOpts, params, defaultFormat))
+    return getCellLabelVNs(h, renderOpts, params, getDatePickerCellValue(renderOpts, params, defaultFormat))
   }
 }
 
@@ -175,7 +192,7 @@ function getSelectCellValue (renderOpts: ColumnCellRenderOptions, params: Column
       return selectItem ? selectItem[labelProp] : value
     }).join(', ')
   }
-  return null
+  return ''
 }
 
 function getCascaderCellValue (renderOpts: RenderOptions, params: ColumnCellRenderParams) {
@@ -321,7 +338,7 @@ function renderOptions (h: CreateElement, options: any[], optionProps: OptionPro
 }
 
 function cellText (h: CreateElement, cellValue: any) {
-  return ['' + (isEmptyValue(cellValue) ? '' : cellValue)]
+  return [formatText(cellValue)]
 }
 
 function createFormItemRender (defaultProps?: { [key: string]: any }) {
@@ -510,7 +527,7 @@ export const VXETablePluginAntd = {
           ]
         },
         renderCell (h, renderOpts, params) {
-          return cellText(h, getSelectCellValue(renderOpts, params))
+          return getCellLabelVNs(h, renderOpts, params, getSelectCellValue(renderOpts, params))
         },
         renderFilter (h, renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
@@ -662,7 +679,7 @@ export const VXETablePluginAntd = {
       ACascader: {
         renderEdit: createEditRender(),
         renderCell (h, renderOpts, params) {
-          return cellText(h, getCascaderCellValue(renderOpts, params))
+          return getCellLabelVNs(h, renderOpts, params, getCascaderCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
@@ -688,7 +705,7 @@ export const VXETablePluginAntd = {
       ARangePicker: {
         renderEdit: createEditRender(),
         renderCell (h, renderOpts, params) {
-          return cellText(h, getRangePickerCellValue(renderOpts, params))
+          return getCellLabelVNs(h, renderOpts, params, getRangePickerCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
@@ -714,7 +731,7 @@ export const VXETablePluginAntd = {
       ATreeSelect: {
         renderEdit: createEditRender(),
         renderCell (h, renderOpts, params) {
-          return cellText(h, getTreeSelectCellValue(renderOpts, params))
+          return getCellLabelVNs(h, renderOpts, params, getTreeSelectCellValue(renderOpts, params))
         },
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender(),
