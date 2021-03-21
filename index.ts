@@ -42,6 +42,23 @@ function getItemProps (renderOpts: VxeGlobalRendererHandles.RenderOptions, param
   return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
 }
 
+function formatText (cellValue: any) {
+  return '' + (isEmptyValue(cellValue) ? '' : cellValue)
+}
+
+function getCellLabelVNs (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams, cellLabel: any) {
+  const { placeholder } = renderOpts
+  return [
+    h('span', {
+      class: 'vxe-cell--label'
+    }, isEmptyValue(cellLabel) ? [
+      h('span', {
+        class: 'vxe-cell--placeholder'
+      }, formatText(placeholder))
+    ] : formatText(cellLabel))
+  ]
+}
+
 function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: Function, changeFunc?: Function) {
   const { events } = renderOpts
   const modelEvent = getModelEvent(renderOpts)
@@ -117,8 +134,8 @@ function matchCascaderData (index: number, list: any[], values: any[], labels: a
 }
 
 function formatDatePicker (defaultFormat: string) {
-  return function (renderOpts: VxeColumnPropTypes.CellRender, params: VxeGlobalRendererHandles.RenderCellParams) {
-    return cellText(getDatePickerCellValue(renderOpts, params, defaultFormat))
+  return function (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams) {
+    return getCellLabelVNs(renderOpts, params, getDatePickerCellValue(renderOpts, params, defaultFormat))
   }
 }
 
@@ -144,7 +161,7 @@ function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: 
       return selectItem ? selectItem[labelProp] : value
     }).join(', ')
   }
-  return null
+  return ''
 }
 
 function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params:  VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
@@ -277,7 +294,7 @@ function defaultExactFilterMethod (params: VxeGlobalRendererHandles.FilterMethod
 }
 
 function cellText (cellValue: any): string[] {
-  return ['' + (isEmptyValue(cellValue) ? '' : cellValue)]
+  return [formatText(cellValue)]
 }
 
 function renderOptions (options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
@@ -488,7 +505,7 @@ export const VXETablePluginAntd = {
           ]
         },
         renderCell (renderOpts, params) {
-          return cellText(getSelectCellValue(renderOpts, params))
+          return getCellLabelVNs(renderOpts, params, getSelectCellValue(renderOpts, params))
         },
         renderFilter (renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
@@ -604,7 +621,7 @@ export const VXETablePluginAntd = {
       ACascader: {
         renderEdit: createEditRender(),
         renderCell (renderOpts, params) {
-          return cellText(getCascaderCellValue(renderOpts, params))
+          return getCellLabelVNs(renderOpts, params, getCascaderCellValue(renderOpts, params))
         },
         renderItemContent: createFormItemRender(),
         exportMethod: createExportMethod(getCascaderCellValue)
@@ -624,7 +641,7 @@ export const VXETablePluginAntd = {
       ARangePicker: {
         renderEdit: createEditRender(),
         renderCell (renderOpts, params) {
-          return cellText(getRangePickerCellValue(renderOpts, params))
+          return getCellLabelVNs(renderOpts, params, getRangePickerCellValue(renderOpts, params))
         },
         renderItemContent: createFormItemRender(),
         exportMethod: createExportMethod(getRangePickerCellValue)
@@ -644,7 +661,7 @@ export const VXETablePluginAntd = {
       ATreeSelect: {
         renderEdit: createEditRender(),
         renderCell (renderOpts, params) {
-          return cellText(getTreeSelectCellValue(renderOpts, params))
+          return getCellLabelVNs(renderOpts, params, getTreeSelectCellValue(renderOpts, params))
         },
         renderItemContent: createFormItemRender(),
         exportMethod: createExportMethod(getTreeSelectCellValue)
