@@ -2,6 +2,8 @@ import { h, resolveComponent, ComponentOptions } from 'vue'
 import XEUtils from 'xe-utils'
 import { VXETableCore, VxeTableDefines, VxeColumnPropTypes, VxeGlobalRendererHandles, VxeGlobalInterceptorHandles, FormItemRenderOptions, FormItemContentRenderParams } from 'vxe-table'
 
+let vxetable: VXETableCore
+
 function isEmptyValue (cellValue: any) {
   return cellValue === null || cellValue === undefined || cellValue === ''
 }
@@ -51,7 +53,7 @@ function getCellLabelVNs (renderOpts: VxeColumnPropTypes.EditRender, params: Vxe
   return [
     h('span', {
       class: 'vxe-cell--label'
-    }, isEmptyValue(cellLabel) ? [
+    }, placeholder && isEmptyValue(cellLabel) ? [
       h('span', {
         class: 'vxe-cell--placeholder'
       }, formatText(placeholder))
@@ -437,6 +439,8 @@ export const VXETablePluginAntd = {
   install (vxetablecore: VXETableCore) {
     const { interceptor, renderer } = vxetablecore
 
+    vxetable = vxetablecore
+
     renderer.mixin({
       AAutoComplete: {
         autofocus: 'input.ant-input',
@@ -723,7 +727,7 @@ export const VXETablePluginAntd = {
   }
 }
 
-if (typeof window !== 'undefined' && window.VXETable) {
+if (typeof window !== 'undefined' && window.VXETable && window.VXETable.use) {
   window.VXETable.use(VXETablePluginAntd)
 }
 
