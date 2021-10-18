@@ -71,11 +71,13 @@ function getCellLabelVNs (h: CreateElement, renderOpts: ColumnEditRenderOptions,
   return [
     h('span', {
       class: 'vxe-cell--label'
-    }, placeholder && isEmptyValue(cellLabel) ? [
-      h('span', {
-        class: 'vxe-cell--placeholder'
-      }, formatText(placeholder))
-    ] : formatText(cellLabel))
+    }, placeholder && isEmptyValue(cellLabel)
+      ? [
+          h('span', {
+            class: 'vxe-cell--placeholder'
+          }, formatText(placeholder))
+        ]
+      : formatText(cellLabel))
   ]
 }
 
@@ -178,19 +180,21 @@ function getSelectCellValue (renderOpts: ColumnCellRenderOptions, params: Column
   const groupOptions = optionGroupProps.options || 'options'
   const cellValue = XEUtils.get(row, column.property)
   if (!isEmptyValue(cellValue)) {
-    return XEUtils.map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups ? (value) => {
-      let selectItem
-      for (let index = 0; index < optionGroups.length; index++) {
-        selectItem = XEUtils.find(optionGroups[index][groupOptions], (item) => item[valueProp] === value)
-        if (selectItem) {
-          break
+    return XEUtils.map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups
+      ? (value) => {
+          let selectItem
+          for (let index = 0; index < optionGroups.length; index++) {
+            selectItem = XEUtils.find(optionGroups[index][groupOptions], (item) => item[valueProp] === value)
+            if (selectItem) {
+              break
+            }
+          }
+          return selectItem ? selectItem[labelProp] : value
         }
-      }
-      return selectItem ? selectItem[labelProp] : value
-    } : (value) => {
-      const selectItem = XEUtils.find(options, (item) => item[valueProp] === value)
-      return selectItem ? selectItem[labelProp] : value
-    }).join(', ')
+      : (value) => {
+          const selectItem = XEUtils.find(options, (item) => item[valueProp] === value)
+          return selectItem ? selectItem[labelProp] : value
+        }).join(', ')
   }
   return ''
 }
@@ -199,8 +203,8 @@ function getCascaderCellValue (renderOpts: RenderOptions, params: ColumnCellRend
   const { props = {} } = renderOpts
   const { row, column } = params
   const cellValue = XEUtils.get(row, column.property)
-  var values = cellValue || []
-  var labels: Array<any> = []
+  const values = cellValue || []
+  const labels: Array<any> = []
   matchCascaderData(0, props.options, values, labels)
   return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `)
 }
@@ -219,7 +223,7 @@ function getTreeSelectCellValue (renderOpts: RenderOptions, params: ColumnCellRe
   const { props = {} } = renderOpts
   const { treeData, treeCheckable } = props
   const { row, column } = params
-  let cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.property)
   if (!isEmptyValue(cellValue)) {
     return XEUtils.map(treeCheckable ? cellValue : [cellValue], (value) => {
       const matchObj = XEUtils.findTree(treeData as any[], (item) => item.value === value, { children: 'children' })
@@ -308,7 +312,7 @@ function defaultFuzzyFilterMethod (params: ColumnFilterMethodParams) {
   const { option, row, column } = params
   const { data } = option
   const cellValue = XEUtils.get(row, column.property)
-  return XEUtils.toString(cellValue).indexOf(data) > -1
+  return XEUtils.toValueString(cellValue).indexOf(data) > -1
 }
 
 /**
@@ -453,6 +457,12 @@ function handleClearEvent (params: InterceptorParams, e: any) {
   }
 }
 
+declare module 'vxe-table' {
+  interface RendererMapOptions {
+    defaultFilterMethod?(params: ColumnFilterMethodParams): boolean;
+  }
+}
+
 /**
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
@@ -464,7 +474,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender()
       },
@@ -473,7 +483,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultFuzzyFilterMethod,
+        defaultFilterMethod: defaultFuzzyFilterMethod,
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender()
       },
@@ -482,7 +492,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultFuzzyFilterMethod,
+        defaultFilterMethod: defaultFuzzyFilterMethod,
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender()
       },
@@ -541,29 +551,29 @@ export const VXETablePluginAntd = {
               class: 'vxe-table--filter-antd-wrapper'
             }, optionGroups
               ? column.filters.map((option, oIndex) => {
-                const optionValue = option.data
-                const props = getCellEditFilterProps(renderOpts, params, optionValue)
-                return h('a-select', {
-                  key: oIndex,
-                  attrs,
-                  props,
-                  on: getFilterOns(renderOpts, params, option, () => {
+                  const optionValue = option.data
+                  const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                  return h('a-select', {
+                    key: oIndex,
+                    attrs,
+                    props,
+                    on: getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
-                    handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-                  }),
-                  nativeOn
-                }, XEUtils.map(optionGroups, (group, gIndex) => {
-                  return h('a-select-opt-group', {
-                    key: gIndex
-                  }, [
-                    h('span', {
-                      slot: 'label'
-                    }, group[groupLabel])
-                  ].concat(
-                    renderOptions(h, group[groupOptions], optionProps)
-                  ))
-                }))
-              })
+                      handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                    }),
+                    nativeOn
+                  }, XEUtils.map(optionGroups, (group, gIndex) => {
+                    return h('a-select-opt-group', {
+                      key: gIndex
+                    }, [
+                      h('span', {
+                        slot: 'label'
+                      }, group[groupLabel])
+                    ].concat(
+                      renderOptions(h, group[groupOptions], optionProps)
+                    ))
+                  }))
+                })
               : column.filters.map((option, oIndex) => {
                 const optionValue = option.data
                 const props = getCellEditFilterProps(renderOpts, params, optionValue)
@@ -580,7 +590,7 @@ export const VXETablePluginAntd = {
               }))
           ]
         },
-        filterMethod (params) {
+        defaultFilterMethod (params) {
           const { option, row, column } = params
           const { data } = option
           const { property, filterRender: renderOpts } = column
@@ -742,7 +752,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender()
       },
@@ -771,7 +781,7 @@ export const VXETablePluginAntd = {
             }))
           ]
         },
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItem: createFormItemRender(),
         renderItemContent: createFormItemRender()
       },
