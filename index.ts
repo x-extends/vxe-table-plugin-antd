@@ -434,6 +434,12 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
   }
 }
 
+declare module 'vxe-table' {
+  interface DefineRendererOption<T> {
+    defaultFilterMethod?(params: VxeGlobalRendererHandles.FilterMethodParams): boolean;
+  }
+}
+
 /**
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
@@ -447,7 +453,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItemContent: createFormItemRender()
       },
       AInput: {
@@ -455,7 +461,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultFuzzyFilterMethod,
+        defaultFilterMethod: defaultFuzzyFilterMethod,
         renderItemContent: createFormItemRender()
       },
       AInputNumber: {
@@ -463,7 +469,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultFuzzyFilterMethod,
+        defaultFilterMethod: defaultFuzzyFilterMethod,
         renderItemContent: createFormItemRender()
       },
       ASelect: {
@@ -564,7 +570,7 @@ export const VXETablePluginAntd = {
               }))
           ]
         },
-        filterMethod (params) {
+        defaultFilterMethod (params) {
           const { option, row, column } = params
           const { data } = option
           const { property, filterRender: renderOpts } = column
@@ -674,7 +680,7 @@ export const VXETablePluginAntd = {
         renderDefault: createEditRender(),
         renderEdit: createEditRender(),
         renderFilter: createFilterRender(),
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItemContent: createFormItemRender()
       },
       ASwitch: {
@@ -700,7 +706,7 @@ export const VXETablePluginAntd = {
             }))
           ]
         },
-        filterMethod: defaultExactFilterMethod,
+        defaultFilterMethod: defaultExactFilterMethod,
         renderItemContent: createFormItemRender()
       },
       ARadio: {
