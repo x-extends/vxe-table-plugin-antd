@@ -84,54 +84,61 @@ VXETable.use(VXETablePluginAntd)
   height="600"
   :data="tableData"
   :edit-config="{trigger: 'click', mode: 'cell'}">
-  <vxe-column field="name" title="AInput" min-width="140" :edit-render="{name: 'AInput'}"></vxe-column>
-  <vxe-column field="age" title="AInputNumber" width="160" :edit-render="{name: 'AInputNumber', props: {max: 35, min: 18}}"></vxe-column>
-  <vxe-column field="sex" title="ASelect" width="140" :edit-render="{name: 'ASelect', options: sexList}"></vxe-column>
-  <vxe-column field="region" title="ACascader" width="200" :edit-render="{name: 'ACascader', props: {options: regionList}}"></vxe-column>
-  <vxe-column field="date7" title="ADatePicker" width="200" :edit-render="{name: 'ADatePicker', props: {type: 'date', format: 'YYYY/MM/DD'}}"></vxe-column>
-  <vxe-column field="flag" title="ASwitch" width="100" :edit-render="{name: 'ASwitch', type: 'visible'}"></vxe-column>
-  <vxe-column field="rate" title="ARate" width="200" :edit-render="{name: 'ARate', type: 'visible'}"></vxe-column>
+  <vxe-column field="name" title="Name" :edit-render="{}">
+    <template #edit="{ row }">
+      <a-input v-model="row.name"></a-input>
+    </template>
+  </vxe-column>
+  <vxe-column field="age" title="Age" :edit-render="{}">
+    <template #edit="{ row }">
+      <a-input-number v-model="row.age"></a-input-number>
+    </template>
+  </vxe-column>
+  <vxe-column field="date" title="Date" width="200" :edit-render="{}">
+    <template #edit="{ row }">
+      <a-date-picker v-model="row.date" type="date"></a-date-picker>
+    </template>
+  </vxe-column>
 </vxe-table>
 ```
 
 ```javascript
-export default {
-  data () {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup () {
     return {
       tableData: [
-        { id: 100, name: 'test0', age: 28, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true },
-        { id: 101, name: 'test1', age: 32, sex: '0', region: ['guangzhou'], date: null, date1: null, date2: null, rate: 2, flag: true },
-        { id: 102, name: 'test2', age: 36, sex: '1', region: ['shenzhen'], date: null, date1: null, date2: null, rate: 2, flag: true }
-      ],
-      sexList: [
-        { label: '男', value: '1' },
-        { label: '女', value: '0' }
-      ],
-      regionList: [
-        { label: '深圳', value: 'shenzhen' },
-        { label: '广州', value: 'guangzhou' }
+        { id: 100, name: 'test0', age: 28, sex: '1', date: null },
+        { id: 101, name: 'test1', age: 32, sex: '0', date: null },
+        { id: 102, name: 'test2', age: 36, sex: '1', date: null }
       ]
     }
   }
-}
+})
 ```
 
 ## Filter demo
 
 ```html
 <vxe-table
-  border
   height="600"
   :data="tableData">
   <vxe-column field="name" title="Name"></vxe-column>
   <vxe-column field="age" title="Age"></vxe-column>
-  <vxe-column field="date" title="Date" :filters="[{data: []}]" :filter-render="{name: 'AInput'}"></vxe-column>
+  <vxe-column field="date" title="Date" :filters="[{data: []}]" :filter-render="{}">
+    <template #filter="{ $panel, column }">
+      <a-input type="type" v-for="(option, index) in column.filters" :key="index" v-model="option.data" @input="$panel.changeOption($event, !!option.data, option)"></a-input>
+    </template>
+  </vxe-column>
 </vxe-table>
 ```
 
 ```javascript
-export default {
-  data () {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup () {
     return {
       tableData: [
         { id: 100, name: 'test0', age: 28, date: null },
@@ -140,7 +147,7 @@ export default {
       ]
     }
   }
-}
+})
 ```
 
 ## License
