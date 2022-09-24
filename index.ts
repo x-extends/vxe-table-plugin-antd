@@ -98,7 +98,7 @@ function getEditOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params:
   const { $table, row, column } = params
   return getOns(renderOpts, params, (value: any) => {
     // 处理 model 值双向绑定
-    XEUtils.set(row, column.property, value)
+    XEUtils.set(row, column.field, value)
   }, () => {
     // 处理 change 事件相关逻辑
     $table.updateStatus(params)
@@ -113,10 +113,10 @@ function getFilterOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, param
 }
 
 function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: FormItemContentRenderParams) {
-  const { $form, data, property } = params
+  const { $form, data, field } = params
   return getOns(renderOpts, params, (value: any) => {
     // 处理 model 值双向绑定
-    XEUtils.set(data, property, value)
+    XEUtils.set(data, field, value)
   }, () => {
     // 处理 change 事件相关逻辑
     $form.updateStatus(params)
@@ -147,7 +147,7 @@ function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: 
   const labelProp = optionProps.label || 'label'
   const valueProp = optionProps.value || 'value'
   const groupOptions = optionGroupProps.options || 'options'
-  const cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.field)
   if (!isEmptyValue(cellValue)) {
     return XEUtils.map(props.mode === 'multiple' ? cellValue : [cellValue], optionGroups
       ? (value) => {
@@ -171,7 +171,7 @@ function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: 
 function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
   const { props = {} } = renderOpts
   const { row, column } = params
-  const cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.field)
   const values = cellValue || []
   const labels: Array<any> = []
   matchCascaderData(0, props.options, values, labels)
@@ -181,7 +181,7 @@ function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOption
 function getRangePickerCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.RenderEditParams) {
   const { props = {} } = renderOpts
   const { row, column } = params
-  let cellValue = XEUtils.get(row, column.property)
+  let cellValue = XEUtils.get(row, column.field)
   if (cellValue) {
     cellValue = XEUtils.map(cellValue, (date: any) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
   }
@@ -192,7 +192,7 @@ function getTreeSelectCellValue (renderOpts: VxeGlobalRendererHandles.RenderOpti
   const { props = {} } = renderOpts
   const { treeData, treeCheckable } = props
   const { row, column } = params
-  const cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.field)
   if (!isEmptyValue(cellValue)) {
     return XEUtils.map(treeCheckable ? cellValue : [cellValue], (value) => {
       const matchObj = XEUtils.findTree(treeData, (item: any) => item.value === value, { children: 'children' })
@@ -205,7 +205,7 @@ function getTreeSelectCellValue (renderOpts: VxeGlobalRendererHandles.RenderOpti
 function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams, defaultFormat: string) {
   const { props = {} } = renderOpts
   const { row, column } = params
-  let cellValue = XEUtils.get(row, column.property)
+  let cellValue = XEUtils.get(row, column.field)
   if (cellValue) {
     cellValue = cellValue.format(props.format || defaultFormat)
   }
@@ -213,10 +213,10 @@ function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOpti
 }
 
 function createEditRender (defaultProps?: { [key: string]: any }) {
-  return function (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderEditParams) {
+  return function (renderOpts: VxeColumnPropTypes.EditRender & { name: string }, params: VxeGlobalRendererHandles.RenderEditParams) {
     const { row, column } = params
     const { name, attrs } = renderOpts
-    const cellValue = XEUtils.get(row, column.property)
+    const cellValue = XEUtils.get(row, column.field)
     return [
       h(resolveComponent(name), {
         ...attrs,
@@ -247,7 +247,7 @@ function defaultButtonsEditRender (renderOpts: VxeColumnPropTypes.EditRender, pa
 }
 
 function createFilterRender (defaultProps?: { [key: string]: any }) {
-  return function (renderOpts: VxeColumnPropTypes.FilterRender, params: VxeGlobalRendererHandles.RenderFilterParams) {
+  return function (renderOpts: VxeColumnPropTypes.FilterRender & { name: string }, params: VxeGlobalRendererHandles.RenderFilterParams) {
     const { column } = params
     const { name, attrs } = renderOpts
     return [
@@ -281,7 +281,7 @@ function handleConfirmFilter (params: VxeGlobalRendererHandles.RenderFilterParam
 function defaultFuzzyFilterMethod (params: VxeGlobalRendererHandles.FilterMethodParams) {
   const { option, row, column } = params
   const { data } = option
-  const cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.field)
   return XEUtils.toValueString(cellValue).indexOf(data) > -1
 }
 
@@ -292,7 +292,7 @@ function defaultFuzzyFilterMethod (params: VxeGlobalRendererHandles.FilterMethod
 function defaultExactFilterMethod (params: VxeGlobalRendererHandles.FilterMethodParams) {
   const { option, row, column } = params
   const { data } = option
-  const cellValue = XEUtils.get(row, column.property)
+  const cellValue = XEUtils.get(row, column.field)
   /* eslint-disable eqeqeq */
   return cellValue === data
 }
@@ -316,11 +316,11 @@ function renderOptions (options: any[], optionProps: VxeGlobalRendererHandles.Re
 }
 
 function createFormItemRender (defaultProps?: { [key: string]: any }) {
-  return function (renderOpts: FormItemRenderOptions, params: FormItemContentRenderParams) {
-    const { data, property } = params
+  return function (renderOpts: FormItemRenderOptions & { name: string }, params: FormItemContentRenderParams) {
+    const { data, field } = params
     const { name } = renderOpts
     const { attrs } = renderOpts
-    const itemValue = XEUtils.get(data, property)
+    const itemValue = XEUtils.get(data, field)
     return [
       h(resolveComponent(name), {
         ...attrs,
@@ -356,25 +356,25 @@ function defaultButtonsItemRender (renderOpts: FormItemRenderOptions, params: Fo
 function createDatePickerExportMethod (defaultFormat: string) {
   return function (params: VxeGlobalRendererHandles.ExportMethodParams) {
     const { row, column, options } = params
-    return options && options.original ? XEUtils.get(row, column.property) : getDatePickerCellValue(column.editRender || column.cellRender, params, defaultFormat)
+    return options && options.original ? XEUtils.get(row, column.field) : getDatePickerCellValue(column.editRender || column.cellRender, params, defaultFormat)
   }
 }
 
 function createExportMethod (getExportCellValue: Function) {
   return function (params: VxeGlobalRendererHandles.ExportMethodParams) {
     const { row, column, options } = params
-    return options && options.original ? XEUtils.get(row, column.property) : getExportCellValue(column.editRender || column.cellRender, params)
+    return options && options.original ? XEUtils.get(row, column.field) : getExportCellValue(column.editRender || column.cellRender, params)
   }
 }
 
 function createFormItemRadioAndCheckboxRender () {
-  return function (renderOpts: FormItemRenderOptions, params: FormItemContentRenderParams) {
+  return function (renderOpts: FormItemRenderOptions & { name: string }, params: FormItemContentRenderParams) {
     const { name, options = [], optionProps = {} } = renderOpts
-    const { data, property } = params
+    const { data, field } = params
     const { attrs } = renderOpts
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
-    const itemValue = XEUtils.get(data, property)
+    const itemValue = XEUtils.get(data, field)
     return [
       h(resolveComponent(`${name}Group`) as ComponentOptions, {
         ...attrs,
@@ -434,12 +434,6 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
   }
 }
 
-declare module 'vxe-table' {
-  interface DefineRendererOption<T> {
-    defaultFilterMethod?(params: VxeGlobalRendererHandles.FilterMethodParams): boolean;
-  }
-}
-
 /**
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
@@ -477,7 +471,7 @@ export const VXETablePluginAntd = {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
           const { row, column } = params
           const { attrs } = renderOpts
-          const cellValue = XEUtils.get(row, column.property)
+          const cellValue = XEUtils.get(row, column.field)
           const props = getCellEditFilterProps(renderOpts, params, cellValue)
           const ons = getEditOns(renderOpts, params)
           if (optionGroups) {
@@ -573,9 +567,9 @@ export const VXETablePluginAntd = {
         defaultFilterMethod (params) {
           const { option, row, column } = params
           const { data } = option
-          const { property, filterRender: renderOpts } = column
+          const { field, filterRender: renderOpts } = column
           const { props = {} } = renderOpts
-          const cellValue = XEUtils.get(row, property)
+          const cellValue = XEUtils.get(row, field)
           if (props.mode === 'multiple') {
             if (XEUtils.isArray(cellValue)) {
               return XEUtils.includeArrays(cellValue, data)
@@ -587,9 +581,9 @@ export const VXETablePluginAntd = {
         },
         renderItemContent (renderOpts, params) {
           const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
-          const { data, property } = params
+          const { data, field } = params
           const { attrs } = renderOpts
-          const itemValue = XEUtils.get(data, property)
+          const itemValue = XEUtils.get(data, field)
           const props = getItemProps(renderOpts, params, itemValue)
           const ons = getItemOns(renderOpts, params)
           if (optionGroups) {
@@ -694,7 +688,7 @@ export const VXETablePluginAntd = {
               class: 'vxe-table--filter-antd-wrapper'
             }, column.filters.map((option, oIndex) => {
               const optionValue = option.data
-              return h(name, {
+              return h(name as string, {
                 key: oIndex,
                 ...attrs,
                 ...getCellEditFilterProps(renderOpts, params, optionValue),
