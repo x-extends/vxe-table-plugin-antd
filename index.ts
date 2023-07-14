@@ -426,6 +426,7 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
     // 级联
     getEventTargetNode($event, bodyElem, 'ant-cascader-menus').flag ||
     // 日期
+    getEventTargetNode($event, bodyElem, 'ant-picker-dropdown').flag ||
     getEventTargetNode($event, bodyElem, 'ant-calendar-picker-container').flag ||
     // 时间选择
     getEventTargetNode($event, bodyElem, 'ant-time-picker-panel').flag
