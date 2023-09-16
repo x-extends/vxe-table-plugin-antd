@@ -458,7 +458,7 @@ function handleClearEvent (params: InterceptorParams, e: any) {
 }
 
 declare module 'vxe-table' {
-  interface RendererMapOptions {
+  export interface RendererMapOptions {
     defaultFilterMethod?(params: ColumnFilterMethodParams): boolean;
   }
 }
@@ -467,7 +467,14 @@ declare module 'vxe-table' {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install ({ interceptor, renderer }: typeof VXETable) {
+  install (xtable: typeof VXETable) {
+    const { interceptor, renderer, version } = xtable
+
+    // 检查版本
+    if (!/^(2|3)\./.test(version)) {
+      console.error('[vxe-table-plugin-antd] Version vxe-table 3.x is required')
+    }
+
     renderer.mixin({
       AAutoComplete: {
         autofocus: 'input.ant-input',
