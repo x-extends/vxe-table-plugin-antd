@@ -1,7 +1,7 @@
 import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 import {
-  VXETable,
+  VXETableCore,
   RenderParams,
   OptionProps,
   RenderOptions,
@@ -467,7 +467,7 @@ declare module 'vxe-table' {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install (xtable: typeof VXETable) {
+  install (xtable: VXETableCore) {
     const { interceptor, renderer, version } = xtable
 
     // 检查版本
