@@ -467,15 +467,13 @@ declare module 'vxe-table' {
  * 基于 vxe-table 表格的适配插件，用于兼容 ant-design-vue 组件库
  */
 export const VXETablePluginAntd = {
-  install (xtable: VXETableCore) {
-    const { interceptor, renderer, version } = xtable
-
+  install (vxetable: VXETableCore) {
     // 检查版本
-    if (!/^(2|3)\./.test(version)) {
-      console.error('[vxe-table-plugin-antd] Version vxe-table 3.x is required')
+    if (!/^(3)\./.test(vxetable.version)) {
+      console.error('[vxe-table-plugin-antd 3.x] Version vxe-table 3.x is required')
     }
 
-    renderer.mixin({
+    vxetable.renderer.mixin({
       AAutoComplete: {
         autofocus: 'input.ant-input',
         renderDefault: createEditRender(),
@@ -814,9 +812,9 @@ export const VXETablePluginAntd = {
       }
     })
 
-    interceptor.add('event.clearFilter', handleClearEvent)
-    interceptor.add('event.clearActived', handleClearEvent)
-    interceptor.add('event.clearAreas', handleClearEvent)
+    vxetable.interceptor.add('event.clearFilter', handleClearEvent)
+    vxetable.interceptor.add('event.clearActived', handleClearEvent)
+    vxetable.interceptor.add('event.clearAreas', handleClearEvent)
   }
 }
 
