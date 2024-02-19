@@ -442,7 +442,7 @@ export const VXETablePluginAntd = {
   install (vxetable: VXETableCore) {
     // 检查版本
     if (!/^(4)\./.test(vxetable.version)) {
-      console.error('[vxe-table-plugin-antd] Version vxe-table 4.x is required')
+      console.error('[vxe-table-plugin-antd 4.x] Version vxe-table 4.x is required')
     }
 
     vxetable.renderer.mixin({
