@@ -1,6 +1,6 @@
 {
   "name": "vxe-table-plugin-antd",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "基于 vxe-table 的表格适配插件，用于兼容 ant-design-vue 组件库",
   "scripts": {
     "lib": "gulp build"
