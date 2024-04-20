@@ -14,7 +14,7 @@
 ## Installing
 
 ```shell
-npm install xe-utils vxe-table@3 vxe-table-plugin-antd@2 ant-design-vue@1
+npm install vxe-table@legacy vxe-table-plugin-antd@legacy ant-design-vue@1
 ```
 
 ```javascript
