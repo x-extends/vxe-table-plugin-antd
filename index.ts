@@ -813,8 +813,11 @@ export const VXETablePluginAntd = {
     })
 
     vxetable.interceptor.add('event.clearFilter', handleClearEvent)
-    vxetable.interceptor.add('event.clearActived', handleClearEvent)
+    vxetable.interceptor.add('event.clearEdit', handleClearEvent)
     vxetable.interceptor.add('event.clearAreas', handleClearEvent)
+
+    // 兼容老版本
+    vxetable.interceptor.add('event.clearActived', handleClearEvent)
   }
 }
 
