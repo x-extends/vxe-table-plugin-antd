@@ -48,6 +48,13 @@ function getModelEvent (renderOpts: RenderOptions) {
   return type
 }
 
+function dateFormatToVxeFormat (format: string) {
+  if (format) {
+    return `${format}`.replace('YYYY', 'yyyy').replace('DD', 'dd')
+  }
+  return format
+}
+
 function getChangeEvent (renderOpts: RenderOptions) {
   return 'change'
 }
@@ -214,7 +221,9 @@ function getRangePickerCellValue (renderOpts: RenderOptions, params: ColumnCellR
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.property)
   if (XEUtils.isArray(cellValue)) {
-    cellValue = XEUtils.map(cellValue, (date) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
+    cellValue = XEUtils.map(cellValue, (date: any) => {
+      return date && date.format ? date.format(props.format || 'YYYY-MM-DD') : XEUtils.toDateString(date, dateFormatToVxeFormat(props.format || 'YYYY-MM-DD'))
+    }).join(' ~ ')
   }
   return cellValue
 }
@@ -238,7 +247,7 @@ function getDatePickerCellValue (renderOpts: RenderOptions, params: ColumnCellRe
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.property)
   if (cellValue) {
-    cellValue = cellValue.format(props.format || defaultFormat)
+    cellValue = cellValue.format ? cellValue.format(props.format || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || defaultFormat))
   }
   return cellValue
 }
@@ -556,29 +565,29 @@ export const VXETablePluginAntd = {
               class: 'vxe-table--filter-antd-wrapper'
             }, optionGroups
               ? column.filters.map((option, oIndex) => {
-                  const optionValue = option.data
-                  const props = getCellEditFilterProps(renderOpts, params, optionValue)
-                  return h('a-select', {
-                    key: oIndex,
-                    attrs,
-                    props,
-                    on: getFilterOns(renderOpts, params, option, () => {
+                const optionValue = option.data
+                const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                return h('a-select', {
+                  key: oIndex,
+                  attrs,
+                  props,
+                  on: getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
-                      handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-                    }),
-                    nativeOn
-                  }, XEUtils.map(optionGroups, (group, gIndex) => {
-                    return h('a-select-opt-group', {
-                      key: gIndex
-                    }, [
-                      h('span', {
-                        slot: 'label'
-                      }, group[groupLabel])
-                    ].concat(
-                      renderOptions(h, group[groupOptions], optionProps)
-                    ))
-                  }))
-                })
+                    handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                  }),
+                  nativeOn
+                }, XEUtils.map(optionGroups, (group, gIndex) => {
+                  return h('a-select-opt-group', {
+                    key: gIndex
+                  }, [
+                    h('span', {
+                      slot: 'label'
+                    }, group[groupLabel])
+                  ].concat(
+                    renderOptions(h, group[groupOptions], optionProps)
+                  ))
+                }))
+              })
               : column.filters.map((option, oIndex) => {
                 const optionValue = option.data
                 const props = getCellEditFilterProps(renderOpts, params, optionValue)
