@@ -30,6 +30,13 @@ function getModelEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
   return type
 }
 
+function dateFormatToVxeFormat (format: string) {
+  if (format) {
+    return `${format}`.replace('YYYY', 'yyyy').replace('DD', 'dd')
+  }
+  return format
+}
+
 function getChangeEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
   return 'change'
 }
@@ -183,7 +190,9 @@ function getRangePickerCellValue (renderOpts: VxeColumnPropTypes.EditRender, par
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.field)
   if (cellValue) {
-    cellValue = XEUtils.map(cellValue, (date: any) => date.format(props.format || 'YYYY-MM-DD')).join(' ~ ')
+    cellValue = XEUtils.map(cellValue, (date: any) => {
+      return date && date.format ? date.format(props.format || 'YYYY-MM-DD') : XEUtils.toDateString(date, dateFormatToVxeFormat(props.format || 'YYYY-MM-DD'))
+    }).join(' ~ ')
   }
   return cellValue
 }
@@ -207,7 +216,7 @@ function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOpti
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.field)
   if (cellValue) {
-    cellValue = cellValue.format(props.format || defaultFormat)
+    cellValue = cellValue.format ? cellValue.format(props.format || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || defaultFormat))
   }
   return cellValue
 }
@@ -728,7 +737,7 @@ export const VXETablePluginAntd = {
     vxetable.interceptor.add('event.clearFilter', handleClearEvent)
     vxetable.interceptor.add('event.clearEdit', handleClearEvent)
     vxetable.interceptor.add('event.clearAreas', handleClearEvent)
-    
+
     // 兼容老版本
     vxetable.interceptor.add('event.clearActived', handleClearEvent)
   }
