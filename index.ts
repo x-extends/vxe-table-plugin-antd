@@ -1,6 +1,6 @@
 import { h, resolveComponent, ComponentOptions } from 'vue'
 import XEUtils from 'xe-utils'
-import { VXETableCore, VxeTableDefines, VxeColumnPropTypes, VxeGlobalRendererHandles, VxeGlobalInterceptorHandles, FormItemRenderOptions, FormItemContentRenderParams } from 'vxe-table'
+import { VXETableCore, VxeTableDefines, VxeColumnPropTypes, VxeGlobalRendererHandles, VxeGlobalInterceptorHandles, FormItemContentRenderParams } from 'vxe-table'
 
 function isEmptyValue (cellValue: any) {
   return cellValue === null || cellValue === undefined || cellValue === ''
@@ -325,7 +325,7 @@ function renderOptions (options: any[], optionProps: VxeGlobalRendererHandles.Re
 }
 
 function createFormItemRender (defaultProps?: { [key: string]: any }) {
-  return function (renderOpts: FormItemRenderOptions & { name: string }, params: FormItemContentRenderParams) {
+  return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
     const { data, field } = params
     const { name } = renderOpts
     const { attrs } = renderOpts
@@ -340,7 +340,7 @@ function createFormItemRender (defaultProps?: { [key: string]: any }) {
   }
 }
 
-function defaultButtonItemRender (renderOpts: FormItemRenderOptions, params: FormItemContentRenderParams) {
+function defaultButtonItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
   const { attrs } = renderOpts
   const props = getItemProps(renderOpts, params, null)
   return [
@@ -354,10 +354,10 @@ function defaultButtonItemRender (renderOpts: FormItemRenderOptions, params: For
   ]
 }
 
-function defaultButtonsItemRender (renderOpts: FormItemRenderOptions, params: FormItemContentRenderParams) {
+function defaultButtonsItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
   const { children } = renderOpts
   if (children) {
-    return children.map((childRenderOpts: FormItemRenderOptions) => defaultButtonItemRender(childRenderOpts, params)[0])
+    return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(childRenderOpts, params)[0])
   }
   return []
 }
@@ -377,7 +377,7 @@ function createExportMethod (getExportCellValue: Function) {
 }
 
 function createFormItemRadioAndCheckboxRender () {
-  return function (renderOpts: FormItemRenderOptions & { name: string }, params: FormItemContentRenderParams) {
+  return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
     const { name, options = [], optionProps = {} } = renderOpts
     const { data, field } = params
     const { attrs } = renderOpts
