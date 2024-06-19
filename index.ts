@@ -215,9 +215,11 @@ function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOpti
   const { props = {} } = renderOpts
   const { row, column } = params
   let cellValue = XEUtils.get(row, column.field)
-  if (cellValue) {
-    cellValue = cellValue.format ? cellValue.format(props.format || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || defaultFormat))
-  }
+  try {
+    if (cellValue) {
+      cellValue = cellValue.format ? cellValue.format(props.format || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || defaultFormat))
+    }
+  } catch (e) {}
   return cellValue
 }
 
@@ -308,20 +310,6 @@ function defaultExactFilterMethod (params: VxeGlobalRendererHandles.FilterMethod
 
 function cellText (cellValue: any): string[] {
   return [formatText(cellValue)]
-}
-
-function renderOptions (options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
-  const labelProp = optionProps.label || 'label'
-  const valueProp = optionProps.value || 'value'
-  return XEUtils.map(options, (item, oIndex) => {
-    return h(resolveComponent('a-select-option') as ComponentOptions, {
-      key: oIndex,
-      value: item[valueProp],
-      disabled: item.disabled
-    }, {
-      default: () => cellText(item[labelProp])
-    })
-  })
 }
 
 function createFormItemRender (defaultProps?: { [key: string]: any }) {
@@ -481,33 +469,19 @@ export const VXETablePluginAntd = {
       },
       ASelect: {
         renderEdit (renderOpts, params) {
-          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { options, optionGroups } = renderOpts
           const { row, column } = params
           const { attrs } = renderOpts
           const cellValue = XEUtils.get(row, column.field)
           const props = getCellEditFilterProps(renderOpts, params, cellValue)
           const ons = getEditOns(renderOpts, params)
           if (optionGroups) {
-            const groupOptions = optionGroupProps.options || 'options'
-            const groupLabel = optionGroupProps.label || 'label'
             return [
               h(resolveComponent('a-select') as ComponentOptions, {
                 ...props,
                 ...attrs,
+                options: optionGroups,
                 ...ons
-              }, {
-                default: () => {
-                  return XEUtils.map(optionGroups, (group, gIndex) => {
-                    return h(resolveComponent('a-select-opt-group') as ComponentOptions, {
-                      key: gIndex
-                    }, {
-                      label: () => {
-                        return h('span', {}, group[groupLabel])
-                      },
-                      default: () => renderOptions(group[groupOptions], optionProps)
-                    })
-                  })
-                }
               })
             ]
           }
@@ -515,9 +489,8 @@ export const VXETablePluginAntd = {
             h(resolveComponent('a-select') as ComponentOptions, {
               ...props,
               ...attrs,
+              options: props.options || options,
               ...ons
-            }, {
-              default: () => renderOptions(options, optionProps)
             })
           ]
         },
@@ -525,9 +498,8 @@ export const VXETablePluginAntd = {
           return getCellLabelVNs(renderOpts, params, getSelectCellValue(renderOpts, params))
         },
         renderFilter (renderOpts, params) {
-          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { options = [], optionGroups, optionGroupProps = {} } = renderOpts
           const groupOptions = optionGroupProps.options || 'options'
-          const groupLabel = optionGroupProps.label || 'label'
           const { column } = params
           const { attrs } = renderOpts
           return [
@@ -541,23 +513,11 @@ export const VXETablePluginAntd = {
                   key: oIndex,
                   ...attrs,
                   ...props,
+                  options: groupOptions,
                   ...getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
                     handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
                   })
-                }, {
-                  default: () => {
-                    return XEUtils.map(optionGroups, (group, gIndex) => {
-                      return h(resolveComponent('a-select-opt-group') as ComponentOptions, {
-                        key: gIndex
-                      }, {
-                        label: () => {
-                          return h('span', {}, group[groupLabel])
-                        },
-                        default: () => renderOptions(group[groupOptions], optionProps)
-                      })
-                    })
-                  }
                 })
               })
               : column.filters.map((option, oIndex) => {
@@ -567,12 +527,11 @@ export const VXETablePluginAntd = {
                   key: oIndex,
                   ...attrs,
                   ...props,
+                  options: props.options || options,
                   ...getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
                     handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
                   })
-                }, {
-                  default: () => renderOptions(options, optionProps)
                 })
               }))
           ]
@@ -593,33 +552,19 @@ export const VXETablePluginAntd = {
           return cellValue == data
         },
         renderItemContent (renderOpts, params) {
-          const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
+          const { options = [], optionGroups } = renderOpts
           const { data, field } = params
           const { attrs } = renderOpts
           const itemValue = XEUtils.get(data, field)
           const props = getItemProps(renderOpts, params, itemValue)
           const ons = getItemOns(renderOpts, params)
           if (optionGroups) {
-            const groupOptions = optionGroupProps.options || 'options'
-            const groupLabel = optionGroupProps.label || 'label'
             return [
               h(resolveComponent('a-select') as ComponentOptions, {
                 ...attrs,
                 ...props,
+                options: optionGroups,
                 ...ons
-              }, {
-                default: () => {
-                  return XEUtils.map(optionGroups, (group, gIndex) => {
-                    return h(resolveComponent('a-select-opt-group') as ComponentOptions, {
-                      key: gIndex
-                    }, {
-                      label: () => {
-                        return h('span', {}, group[groupLabel])
-                      },
-                      default: () => renderOptions(group[groupOptions], optionProps)
-                    })
-                  })
-                }
               })
             ]
           }
@@ -627,9 +572,8 @@ export const VXETablePluginAntd = {
             h(resolveComponent('a-select') as ComponentOptions, {
               ...attrs,
               ...props,
+              options: props.options || options,
               ...ons
-            }, {
-              default: () => renderOptions(options, optionProps)
             })
           ]
         },
