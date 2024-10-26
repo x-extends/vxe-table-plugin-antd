@@ -318,7 +318,7 @@ function defaultExactFilterMethod (params: any) {
   return cellValue === data
 }
 
-function any (h: CreateElement, options: any[], optionProps: any) {
+function renderOptions (h: CreateElement, options: any[], optionProps: any) {
   const labelProp = optionProps.label || 'label'
   const valueProp = optionProps.value || 'value'
   return XEUtils.map(options, (item, oIndex) => {
@@ -518,7 +518,7 @@ export const VXETablePluginAntd = {
                     slot: 'label'
                   }, group[groupLabel])
                 ].concat(
-                  any(h, group[groupOptions], optionProps)
+                  renderOptions(h, group[groupOptions], optionProps)
                 ))
               }))
             ]
@@ -529,7 +529,7 @@ export const VXETablePluginAntd = {
               attrs,
               on,
               nativeOn
-            }, any(h, options, optionProps))
+            }, renderOptions(h, options, optionProps))
           ]
         },
         renderCell (h: CreateElement, renderOpts: any, params: any) {
@@ -566,7 +566,7 @@ export const VXETablePluginAntd = {
                       slot: 'label'
                     }, group[groupLabel])
                   ].concat(
-                    any(h, group[groupOptions], optionProps)
+                    renderOptions(h, group[groupOptions], optionProps)
                   ))
                 }))
               })
@@ -582,7 +582,7 @@ export const VXETablePluginAntd = {
                     handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
                   }),
                   nativeOn
-                }, any(h, options, optionProps))
+                }, renderOptions(h, options, optionProps))
               }))
           ]
         },
@@ -626,7 +626,7 @@ export const VXETablePluginAntd = {
                     slot: 'label'
                   }, group[groupLabel])
                 ].concat(
-                  any(h, group[groupOptions], optionProps)
+                  renderOptions(h, group[groupOptions], optionProps)
                 ))
               }))
             ]
@@ -637,7 +637,7 @@ export const VXETablePluginAntd = {
               props,
               on,
               nativeOn
-            }, any(h, options, optionProps))
+            }, renderOptions(h, options, optionProps))
           ]
         },
         renderItemContent (h: CreateElement, renderOpts: any, params: any) {
@@ -665,7 +665,7 @@ export const VXETablePluginAntd = {
                     slot: 'label'
                   }, group[groupLabel])
                 ].concat(
-                  any(h, group[groupOptions], optionProps)
+                  renderOptions(h, group[groupOptions], optionProps)
                 ))
               }))
             ]
@@ -676,7 +676,7 @@ export const VXETablePluginAntd = {
               props,
               on,
               nativeOn
-            }, any(h, options, optionProps))
+            }, renderOptions(h, options, optionProps))
           ]
         },
         cellExportMethod: createExportMethod(getSelectCellValue),
