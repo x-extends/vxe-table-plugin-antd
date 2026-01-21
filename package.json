@@ -12,6 +12,7 @@
     "*.d.ts",
     "style.scss"
   ],
+  "module": "./index.ts",
   "main": "dist/index.common.js",
   "unpkg": "dist/index.umd.js",
   "jsdelivr": "dist/index.umd.js",
