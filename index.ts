@@ -645,7 +645,7 @@ export const VXETablePluginAntd = {
               class: 'vxe-table--filter-antd-wrapper'
             }, column.filters.map((option, oIndex) => {
               const optionValue = option.data
-              return h(name as string, {
+              return h(resolveComponent(name as string), {
                 key: oIndex,
                 ...attrs,
                 ...getCellEditFilterProps(renderOpts, params, optionValue),
